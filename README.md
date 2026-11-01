@@ -99,6 +99,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⇧⌘F | Datei-Browser (SCP) für das aktive SSH-Pane |
 | ⌘+ / ⌘- / ⌘0 | Schriftgröße |
 | ⌘← / ⌘→ / ⌥← / ⌥→ | Zeilenanfang/-ende, Wort zurück/vor |
+| ⌘{# of Tab} | Move between Tabs |
 
 Beendete Sessions lassen sich mit Enter neu verbinden.
 
