@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.1-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.1-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.4-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.4-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -32,8 +32,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | Split-Panes | Jedes Pane beliebig vertikal (nebeneinander) und horizontal (untereinander) teilbar, Trenner per Maus ziehen (Doppelklick = 50/50), Pane maximieren, gleichmäßig verteilen, Pane in neuen Tab verschieben. Tabs und Panes per Drag & Drop neu anordnen (siehe unten) |
 | Multi-Input | Tastatureingaben gehen gleichzeitig an alle markierten Panes – über Tabs hinweg. Pro Pane über das ⇶-Symbol ein-/ausschließbar. Markierte Panes sind orange umrandet |
 | Multi-Paste | Text/Befehle an ausgewählte Panes senden: als Block (Bracketed Paste) oder zeilenweise mit Verzögerung, Platzhalter `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, Verlauf der letzten 20 Einträge |
-| Session-Verwaltung | Seitenleiste mit Ordnern, Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration (siehe unten) |
-| Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen wie MobaXterm, 4 Farbschemata, Layout-Wiederherstellung |
+| Session-Verwaltung | Seitenleiste mit Ordnern (Rechtsklick → „Neuer Ordner…“, Sessions per Drag & Drop in Ordner verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration (siehe unten) |
+| Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen, 4 Farbschemata, Layout-Wiederherstellung |
 
 ## Konfiguration exportieren / importieren
 
@@ -85,7 +85,8 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⌘D | Vertikal teilen (nebeneinander) |
 | ⇧⌘D | Horizontal teilen (untereinander) |
 | ⌥⌘D | Session in neuem Pane duplizieren |
-| ⌘] / ⌘[ | Nächstes / vorheriges Pane |
+| ⌘] / ⌘[ | Nächstes / vorheriges Pane im aktuellen Tab |
+| ⌘→ / ⌘← | Nächstes / vorheriges Pane über alle Tabs hinweg (nach dem letzten Pane eines Tabs geht es im nächsten Tab weiter) |
 | ⇧⌘] / ⇧⌘[ | Nächster / vorheriger Tab, ⌘1–9 direkt |
 | ⇧⌘↩ | Pane maximieren |
 | ⌥⌘= | Panes gleichmäßig verteilen |
@@ -98,10 +99,19 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⌘B | Seitenleiste ein/aus |
 | ⇧⌘F | Datei-Browser (SCP) für das aktive SSH-Pane |
 | ⌘+ / ⌘- / ⌘0 | Schriftgröße |
-| ⌘← / ⌘→ / ⌥← / ⌥→ | Zeilenanfang/-ende, Wort zurück/vor |
-| ⌘{# of Tab} | Move between Tabs |
+| ⌥← / ⌥→ | Wort zurück/vor (Zeilenanfang/-ende: fn← / fn→ oder Ctrl+A / Ctrl+E) |
 
 Beendete Sessions lassen sich mit Enter neu verbinden.
+
+### Ordner in der Session-Liste
+
+- **Anlegen:** Rechtsklick in die Session-Liste (freie Fläche, auf einen Ordner oder eine Session) → „Neuer Ordner…“. Neue Ordner sind zunächst leer und bleiben auch leer bestehen.
+- **Verschieben:** Session mit der Maus auf einen Ordner ziehen (der Ordner wird blau markiert). Auf eine Session in einem Ordner ziehen geht auch. Auf „Sessions (ohne Ordner)“ oder auf die freie Fläche ziehen nimmt die Session aus dem Ordner. Alternativ Rechtsklick auf die Session → „In Ordner verschieben…“.
+- **Ordner-Rechtsklick:** Alle als Kacheln öffnen, neue Session direkt in diesem Ordner, umbenennen, löschen. Beim Löschen werden die enthaltenen Sessions nicht gelöscht, sondern nach „Sessions“ verschoben.
+- Sessions aus der Liste auf ein Pane zu ziehen öffnet sie wie bisher.
+- Leere Ordner werden in den Einstellungen gespeichert und beim Konfigurations-Export mitgenommen.
+
+Rückfrage beim Schließen: Solange SSH-, Telnet- oder serielle Verbindungen aktiv sind, fragt MacT-1000 vor dem Schließen eines Panes, eines Tabs, des Fensters und vor dem Beenden (⌘Q) nach, ob wirklich beendet werden soll. Lokale Shells und RDP (externes Programm) lösen keine Rückfrage aus. Abschaltbar unter Einstellungen → „Vor dem Schließen … bei aktiven Verbindungen nachfragen“.
 
 ## Selbst bauen
 
