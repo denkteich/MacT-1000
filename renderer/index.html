@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:">
+  <title>MacT-1000</title>
+  <link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="traffic-space"></div>
+    <div class="brand">MacT-1000</div>
+    <div class="toolbar">
+      <button class="tb" data-cmd="newSession" title="Neue Session (⌘N)"><span class="ic">＋</span><span>Session</span></button>
+      <button class="tb" data-cmd="newTab" title="Lokale Shell in neuem Tab (⌘T)"><span class="ic">❯_</span><span>Shell</span></button>
+      <div class="sep"></div>
+      <button class="tb" data-cmd="splitV" title="Vertikal teilen – nebeneinander (⌘D)"><span class="ic split-v"></span><span>Nebeneinander</span></button>
+      <button class="tb" data-cmd="splitH" title="Horizontal teilen – untereinander (⇧⌘D)"><span class="ic split-h"></span><span>Untereinander</span></button>
+      <div class="sep"></div>
+      <button class="tb" id="btn-multi" data-cmd="toggleMultiInput" title="Multi-Input: Tastatureingaben an alle markierten Panes (⇧⌘I)"><span class="ic">⇶</span><span>Multi-Input</span></button>
+      <button class="tb" data-cmd="multiPaste" title="Multi-Paste: Text an mehrere Panes senden (⇧⌘V)"><span class="ic">⧉</span><span>Multi-Paste</span></button>
+      <div class="sep"></div>
+      <button class="tb" data-cmd="settings" title="Einstellungen (⌘,)"><span class="ic">⚙</span></button>
+    </div>
+    <div class="quick">
+      <input id="quick-input" type="text" spellcheck="false" placeholder="Quick Connect: user@host · telnet 10.0.0.1 · /dev/cu.usbserial 9600 · rdp host  (⌘K)">
+    </div>
+  </header>
+
+  <div id="multi-banner" hidden>
+    <span>⇶ Multi-Input aktiv – Eingaben gehen an <b id="multi-count">0</b> Panes.</span>
+    <button data-cmd="broadcastSelectTab">Alle im Tab</button>
+    <button data-cmd="broadcastSelectAll">Alle Tabs</button>
+    <button data-cmd="broadcastSelectNone">Keine</button>
+    <button data-cmd="toggleMultiInput">Beenden</button>
+  </div>
+
+  <div id="main">
+    <aside id="sidebar">
+      <div class="side-tabs">
+        <button class="side-tab on" data-tab="sessions">Sessions</button>
+        <button class="side-tab" data-tab="files" title="Datei-Browser für die aktive SSH-Session (⇧⌘F)">Dateien (SCP)</button>
+      </div>
+      <div id="side-sessions" class="side-panel">
+        <div class="side-head">
+          <input id="side-filter" type="search" placeholder="Sessions filtern…" spellcheck="false">
+          <button id="side-add" title="Neue Session">＋</button>
+        </div>
+        <div id="session-tree"></div>
+        <div class="side-foot">
+          <span id="side-count"></span>
+        </div>
+      </div>
+      <div id="side-files" class="side-panel" hidden>
+        <div class="fx-head">
+          <span class="badge" style="color:#6cb6ff">SSH</span>
+          <span id="fx-target" class="fx-target">Kein SSH-Pane</span>
+        </div>
+        <div class="fx-tools">
+          <button class="p-btn" id="fx-up" title="Übergeordnetes Verzeichnis">↰</button>
+          <button class="p-btn" id="fx-home" title="Home-Verzeichnis">⌂</button>
+          <button class="p-btn" id="fx-refresh" title="Aktualisieren">↻</button>
+          <button class="p-btn" id="fx-mkdir" title="Neuer Ordner">＋ Ordner</button>
+          <span class="grow"></span>
+          <button class="p-btn" id="fx-upload" title="Dateien/Ordner hochladen (oder aus dem Finder hierher ziehen)">↑ Hoch</button>
+          <button class="p-btn" id="fx-download" title="Markierte herunterladen">↓ Runter</button>
+          <button class="p-btn" id="fx-more" title="Weitere Aktionen">⋯</button>
+        </div>
+        <input id="fx-path" class="fx-path" type="text" spellcheck="false" placeholder="/pfad – Enter wechselt">
+        <div id="fx-list" tabindex="0"></div>
+        <div id="fx-jobs" hidden></div>
+        <div class="side-foot"><span id="fx-count"></span><span class="fx-drop-hint">Dateien aus dem Finder hierher ziehen = Upload</span></div>
+      </div>
+    </aside>
+    <div id="sidebar-resizer"></div>
+    <section id="workarea">
+      <nav id="tabbar"><div id="tabs"></div><button id="tab-add" title="Neuer Tab (⌘T)">＋</button></nav>
+      <div id="workspaces"></div>
+    </section>
+  </div>
+
+  <footer id="statusbar">
+    <span id="st-session">–</span>
+    <span class="grow"></span>
+    <span id="st-multi"></span>
+    <span id="st-size"></span>
+  </footer>
+
+  <div id="modal-root"></div>
+  <div id="ctx-menu" hidden></div>
+  <div id="toast" hidden></div>
+
+  <script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
+  <script src="../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+  <script src="../node_modules/@xterm/addon-search/lib/addon-search.js"></script>
+  <script src="../node_modules/@xterm/addon-web-links/lib/addon-web-links.js"></script>
+  <script src="util.js"></script>
+  <script src="themes.js"></script>
+  <script src="layout.js"></script>
+  <script src="dialogs.js"></script>
+  <script src="files.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "name": "mact1000",
+  "productName": "MacT-1000",
+  "version": "1.5.4",
+  "description": "Terminal-Client für macOS: Lokale Shell, SSH, Telnet, Serielle Konsole, RDP, SCP-Dateiübertragung – mit Split-Panes, Multi-Input und Multi-Paste",
+  "main": "src/main.js",
+  "author": "Harald Thomas",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "node scripts/fix-permissions.js",
+    "dist": "electron-builder --mac",
+    "dist:arm64": "electron-builder --mac --arm64",
+    "dist:x64": "electron-builder --mac --x64",
+    "dist:universal": "electron-builder --mac --universal"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-search": "^0.16.0",
+    "@xterm/addon-web-links": "^0.12.0",
+    "@xterm/xterm": "^6.0.0",
+    "node-pty": "^1.1.0",
+    "serialport": "^13.0.0"
+  },
+  "devDependencies": {
+    "electron": "^45.2.1",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "de.mact1000.app",
+    "productName": "MacT-1000",
+    "npmRebuild": false,
+    "asarUnpack": [
+      "node_modules/node-pty/**",
+      "node_modules/@serialport/**"
+    ],
+    "files": [
+      "src/**",
+      "renderer/**",
+      "package.json",
+      "!test/**",
+      "!node_modules/node-pty/build/**",
+      "!node_modules/node-pty/src/**",
+      "!node_modules/node-pty/deps/**",
+      "!node_modules/node-pty/**/*.pdb",
+      "!node_modules/cpu-features/**",
+      "!node_modules/**/*.map",
+      "!node_modules/@xterm/**/*.mjs",
+      "!node_modules/@serialport/bindings-cpp/prebuilds/{android,linux}-*/**"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "zip"
+      ],
+      "icon": "build/icon.png",
+      "identity": null,
+      "extendInfo": {
+        "NSAppleEventsUsageDescription": "MacT-1000 startet RDP-Clients.",
+        "NSLocalNetworkUsageDescription": "MacT-1000 verbindet sich per SSH/Telnet mit Geräten im lokalen Netzwerk."
+      },
+      "files": [
+        "!node_modules/node-pty/prebuilds/win32-*/**",
+        "!node_modules/@serialport/bindings-cpp/prebuilds/win32-*/**"
+      ]
+    },
+    "afterPack": "scripts/after-pack.js",
+    "copyright": "Copyright © 2026 Harald Thomas"
+  }
+}
