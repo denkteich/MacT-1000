@@ -88,7 +88,8 @@ async function sessionDialog({ cfg, mode = 'new', folders = [], onSubmit }) {
       const i = inp('folder', cfg.folder, { placeholder: 'optional, z.B. Rechenzentrum', list: 'folder-list' });
       return h('span', { class: 'contents' }, i, h('datalist', { id: 'folder-list' }, folders.map(f => h('option', { value: f }))));
     })()),
-    field('Farbe', sel('color', cfg.color || '', [['', 'Standard'], ['#e06c75', 'Rot'], ['#e5c07b', 'Gelb'], ['#98c379', 'Grün'], ['#61afef', 'Blau'], ['#c678dd', 'Lila']]))
+    field('Farbe', sel('color', cfg.color || '', [['', 'Standard'], ['#e06c75', 'Rot'], ['#e5c07b', 'Gelb'], ['#98c379', 'Grün'], ['#61afef', 'Blau'], ['#c678dd', 'Lila']])),
+    field('Makro nach dem Verbinden', sel('macroId', cfg.macroId || '', [['', '– keins –'], ...(typeof macroList === 'function' ? macroList() : []).map(m => [m.id, m.name])]))
   );
   const specific = h('div', { class: 'specific' });
   const body = h('div', { class: 'session-form' }, common, h('hr'), specific);
@@ -222,6 +223,7 @@ async function sessionDialog({ cfg, mode = 'new', folders = [], onSubmit }) {
     for (const k of ['port', 'baudRate', 'dataBits', 'stopBits', 'connectTimeout']) if (out[k] !== undefined && out[k] !== '') out[k] = Number(out[k]);
     // Felder anderer Typen nicht mitschleppen
     if (!out.name) delete out.name;
+    if (!out.macroId || out.type === 'rdp') delete out.macroId;
     return out;
   };
   const validate = (c) => {

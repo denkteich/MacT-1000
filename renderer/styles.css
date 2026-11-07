@@ -295,3 +295,29 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0 12px; }
 .pane-header[draggable] .p-btn { cursor: default; }
 .drop-overlay.move { background: rgba(126,198,153,.22); border-color: var(--ok); }
 body.dragging-tab .pane .drop-overlay.show.move::after, body.dragging-pane .pane .drop-overlay.show.move::after { content: 'Hier einfügen'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--bg3); color: var(--text); padding: 5px 10px; border-radius: 5px; font-size: 12px; }
+
+/* ---------- Makros ---------- */
+.macro-ind { font-size: 11px; padding: 1px 7px; border-radius: 9px; background: color-mix(in srgb, var(--accent) 25%, transparent); color: var(--text); cursor: pointer; white-space: nowrap; margin-left: 6px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+.macro-ind.rec { background: #c0392b; color: #fff; animation: recblink 1.2s infinite; }
+@keyframes recblink { 50% { opacity: .55; } }
+#btn-macros.rec { background: #c0392b; color: #fff; border-radius: 6px; }
+.macro-form .lbl-row { display: flex; gap: 10px; align-items: baseline; margin: 10px 0 4px; }
+.macro-form .lbl-row .lbl { font-weight: 600; font-size: 12px; }
+.macro-steps { display: flex; flex-direction: column; gap: 4px; max-height: 46vh; overflow: auto; padding: 2px; }
+.macro-step { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 6px; background: var(--bg2, rgba(255,255,255,.03)); }
+.macro-step.expect { border-left: 3px solid #e5c07b; }
+.macro-step.send { border-left: 3px solid #61afef; }
+.macro-step.pause { border-left: 3px solid #888; }
+.macro-step .nr { width: 18px; text-align: right; color: var(--muted); font-size: 11px; }
+.macro-step select { width: auto; flex: none; }
+.macro-step .grow { flex: 1; min-width: 120px; }
+.macro-step input.mono { font-family: var(--mono, Menlo, monospace); }
+.macro-step input.num { width: 64px; flex: none; }
+.macro-step .opts { display: flex; align-items: center; gap: 6px; flex: none; }
+.macro-step .mini { font-size: 11px; color: var(--muted); display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.macro-step.sub { background: none; padding-top: 0; padding-left: 28px; }
+.trigger-row { border-bottom: 1px solid var(--border, rgba(255,255,255,.06)); padding-bottom: 4px; }
+.macro-add { display: flex; gap: 6px; margin-top: 8px; }
+.macro-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid var(--border, rgba(255,255,255,.06)); }
+.macro-row .m-name { font-weight: 600; }
+.macro-row .m-sub { flex: 1; color: var(--muted); font-size: 11px; }

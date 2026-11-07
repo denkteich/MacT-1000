@@ -26,6 +26,7 @@ class Pane {
     this.termTitle = '';
     this.term = null;
     this.sessionId = null;
+    this.macroRun = null;
     S.panes.set(this.id, this);
     this.buildDom();
     if (cfg) this.start(cfg); else this.showLauncher();
@@ -43,8 +44,9 @@ class Pane {
     this.titleEl = h('span', { class: 'p-title' }, 'Neues Pane');
     this.bcBtn = h('button', { class: 'p-btn bc-btn', title: 'Dieses Pane in Multi-Input einbeziehen', onclick: (e) => { e.stopPropagation(); this.toggleBroadcast(); } }, '⇶');
     const btn = (label, title, fn, cls = '') => h('button', { class: 'p-btn ' + cls, title, onclick: (e) => { e.stopPropagation(); fn(e); } }, label);
+    this.macroEl = h('span', { class: 'macro-ind', hidden: true, onclick: (e) => { e.stopPropagation(); if (isRecording(this)) stopRecording(); else if (this.macroRun) this.macroRun.stop('manuell'); } });
     this.header = h('div', { class: 'pane-header' },
-      this.badge, this.titleEl, h('span', { class: 'grow' }),
+      this.badge, this.titleEl, this.macroEl, h('span', { class: 'grow' }),
       this.bcBtn,
       (this.fxBtn = btn('⇅', 'Dateien per SCP übertragen (⇧⌘F)', () => toggleFiles(this), 'fx-btn')),
       btn('', 'Vertikal teilen – nebeneinander (⌘D)', () => splitPane(this, 'row'), 'ic-split-v'),
@@ -173,11 +175,14 @@ class Pane {
     if (this.cfg.type === 'local' && !this.cfg.shell && S.settings.defaultShell) this.cfg.shell = S.settings.defaultShell;
     this.ensureTerm();
     this.fit();
+    if (this.macroRun) this.macroRun.stop('', true);
     if (this.sessionId) { S.bySession.delete(this.sessionId); api.kill(this.sessionId); }
     this.sessionId = uid('s');
     S.bySession.set(this.sessionId, this);
     this.state = 'connecting';
+    this._trigBuf = ''; this._trigState = {};
     this.updateHeader();
+    if (this.cfg.macroId) autoStartMacro(this, this.cfg);
     const sid = this.sessionId;
     const size = { cols: this.term.cols, rows: this.term.rows };
     this._cols = size.cols; this._rows = size.rows;
@@ -211,13 +216,35 @@ class Pane {
       if (d === '\r' && this.cfg) this.restart();
       return;
     }
+    if (REC.pane === this) recInput(this, d);
     if (S.multiInput && this.broadcast) {
       for (const p of broadcastTargets()) p.sendRaw(d);
     } else this.sendRaw(d);
   }
   sendRaw(d) { if (this.state === 'running' && this.sessionId) api.write(this.sessionId, d); }
 
-  onData(data) { if (this.term) this.term.write(data); }
+  onData(data) {
+    if (this.term) this.term.write(data);
+    if (REC.pane === this) recOutput(this, data);
+    if (this.macroRun || (S.settings.triggers && S.settings.triggers.length)) {
+      const t = stripAnsi(data);
+      if (this.macroRun) this.macroRun.feed(t);
+      runTriggers(this, t);
+    }
+  }
+  updateMacroUi() {
+    if (!this.macroEl) return;
+    const rec = isRecording(this);
+    const run = this.macroRun;
+    this.macroEl.hidden = !rec && !run;
+    this.macroEl.classList.toggle('rec', !!rec);
+    if (rec) { this.macroEl.textContent = '● Aufnahme'; this.macroEl.title = 'Makro-Aufzeichnung läuft – klicken zum Stoppen (⇧⌘R)'; }
+    else if (run) {
+      const st = run.step;
+      this.macroEl.textContent = `▶ ${run.macro.name} ${Math.min(run.idx + 1, run.macro.steps.length)}/${run.macro.steps.length}`;
+      this.macroEl.title = (st && st.t === 'expect' ? `Wartet auf „${st.pattern}“` : 'Makro läuft') + ' – klicken zum Stoppen';
+    }
+  }
 
   onExit(info) {
     if (this.cfg && this.cfg.type === 'local' && info.code === 0 && S.settings.closeLocalOnExit !== false && !info.keep) {
@@ -228,6 +255,8 @@ class Pane {
     this.markExited();
   }
   markExited() {
+    if (this.macroRun) this.macroRun.stop('Session beendet');
+    if (REC.pane === this) stopRecording();
     this.state = 'exited';
     if (this.sessionId) S.bySession.delete(this.sessionId);
     this.sessionId = null;
@@ -337,6 +366,10 @@ class Pane {
       { label: 'In neuen Tab verschieben', click: () => movePaneToNewTab(this), disabled: Layout.leaves(this.tab.root).length < 2 },
       { sep: true },
       { label: this.broadcast ? 'Aus Multi-Input entfernen' : 'In Multi-Input einbeziehen', click: () => this.toggleBroadcast() },
+      { sep: true },
+      { label: 'Makro ausführen…', click: () => { setActivePane(this); pickAndRunMacro(); }, disabled: this.state !== 'running' },
+      this.macroRun ? { label: `Makro „${this.macroRun.macro.name}“ stoppen`, click: () => this.macroRun && this.macroRun.stop('manuell') }
+        : { label: isRecording(this) ? 'Aufzeichnung stoppen…' : 'Makro aufzeichnen', click: () => isRecording(this) ? stopRecording() : startRecording(this), disabled: this.state !== 'running' && !isRecording(this) },
       ...(t === 'ssh' ? [{ sep: true }, { label: 'Dateien übertragen (SCP)…', click: () => toggleFiles(this) },
         { label: 'Dateien hochladen…', click: async () => { await toggleFiles(this); const f = await api.fx.pickUpload(); if (f.length) { await waitCwd(this); fxUpload(f); } } }] : []),
       { sep: true },
@@ -427,6 +460,8 @@ class Pane {
   }
 
   destroy() {
+    if (this.macroRun) this.macroRun.stop('', true);
+    if (REC.pane === this) stopRecording();
     fxOnPaneClosed(this);
     if (this.sessionId) { api.kill(this.sessionId); S.bySession.delete(this.sessionId); }
     this.ro.disconnect();
@@ -1204,6 +1239,12 @@ function focusedInput() {
 }
 
 const COMMANDS = {
+  macroMenu: () => { const b = $('#btn-macros').getBoundingClientRect(); showMacroMenu(b.left, b.bottom + 4); },
+  macroRun: () => pickAndRunMacro(),
+  macroRecord: () => { if (REC.pane) stopRecording(); else startRecording(); },
+  macroManage: () => macroManager(),
+  macroTriggers: () => triggerManager(),
+  macroStop: () => stopAllMacros(),
   newTab: () => createTab({ type: 'local' }),
   newSession: () => newSessionDialog(),
   quickConnect: () => { const i = $('#quick-input'); i.focus(); i.select(); },

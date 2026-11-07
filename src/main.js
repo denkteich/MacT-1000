@@ -123,6 +123,14 @@ function buildMenu() {
       { label: 'Multi-Input ein/aus', accelerator: 'Cmd+Shift+I', click: () => send('toggleMultiInput') },
       { label: 'Alle Panes im Tab für Multi-Input wählen', accelerator: 'Cmd+Shift+A', click: () => send('broadcastSelectTab') }
     ]},
+    { label: 'Makros', submenu: [
+      { label: 'Makro ausführen…', accelerator: 'Cmd+Shift+M', click: () => send('macroRun') },
+      { label: 'Aufzeichnung starten/stoppen', accelerator: 'Cmd+Shift+R', click: () => send('macroRecord') },
+      { label: 'Laufende Makros stoppen', accelerator: 'Cmd+.', click: () => send('macroStop') },
+      { type: 'separator' },
+      { label: 'Makros verwalten…', click: () => send('macroManage') },
+      { label: 'Auto-Antworten…', click: () => send('macroTriggers') }
+    ]},
     { label: 'Ansicht', submenu: [
       { label: 'Vertikal teilen (nebeneinander)', accelerator: 'Cmd+D', click: () => send('splitV') },
       { label: 'Horizontal teilen (untereinander)', accelerator: 'Cmd+Shift+D', click: () => send('splitH') },
