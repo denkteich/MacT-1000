@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.4-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.4-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.5-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.5-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -31,6 +31,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | RDP | Startet „Windows App“ (Microsoft, App Store) über eine erzeugte .rdp-Datei oder FreeRDP (`brew install freerdp`, Passwortabfrage im Pane). Auflösung, Multi-Monitor, Zwischenablage, Laufwerke, RD-Gateway, Admin-Session |
 | Split-Panes | Jedes Pane beliebig vertikal (nebeneinander) und horizontal (untereinander) teilbar, Trenner per Maus ziehen (Doppelklick = 50/50), Pane maximieren, gleichmäßig verteilen, Pane in neuen Tab verschieben. Tabs und Panes per Drag & Drop neu anordnen (siehe unten) |
 | Multi-Input | Tastatureingaben gehen gleichzeitig an alle markierten Panes – über Tabs hinweg. Pro Pane über das ⇶-Symbol ein-/ausschließbar. Markierte Panes sind orange umrandet |
+| Makros | Abläufe „warte auf Ausgabe → sende Eingabe“, manuell erstellen oder aufzeichnen, Variablen mit Abfrage beim Start, Autostart nach dem Verbinden, Ausführung auf mehreren Panes; Auto-Antworten auf bestimmte Ausgaben (siehe unten) |
 | Multi-Paste | Text/Befehle an ausgewählte Panes senden: als Block (Bracketed Paste) oder zeilenweise mit Verzögerung, Platzhalter `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, Verlauf der letzten 20 Einträge |
 | Session-Verwaltung | Seitenleiste mit Ordnern (Rechtsklick → „Neuer Ordner…“, Sessions per Drag & Drop in Ordner verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration (siehe unten) |
 | Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen, 4 Farbschemata, Layout-Wiederherstellung |
@@ -40,7 +41,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 Menü **Datei → Gesamte Konfiguration exportieren…** (⇧⌘E) oder in den Einstellungen (⚙). Die JSON-Datei enthält:
 
 - das komplette Adressbuch: alle Sessions mit Ordnern, Farben und sämtlichen Verbindungsoptionen (SSH, Telnet, Seriell, RDP, Befehl)
-- alle Einstellungen (Schrift, Farbschema, Verhalten …)
+- alle Einstellungen (Schrift, Farbschema, Verhalten …) inklusive Makros und Auto-Antworten
 - Tab-/Split-Layout, eingeklappte Ordner und Multi-Paste-Verlauf
 - optional die gespeicherten Passwörter – nur verschlüsselt (AES-256-GCM, Schlüssel per scrypt aus einem Export-Passwort)
 
@@ -65,6 +66,28 @@ Pro Session (Session bearbeiten) gibt es dazu zwei Optionen:
 - „Klassisches SCP-Protokoll (scp -O)“ – für Geräte ohne SFTP-Subsystem (z. B. manche Switches, Router, Dropbear). Standard ist das moderne scp über SFTP.
 
 Hinweis: Der Browser listet Verzeichnisse per `ls` in einer POSIX-Shell auf dem Server. Auf Geräten ohne Unix-Shell (z. B. Cisco IOS) funktioniert das Durchsuchen nicht; dort ist SCP meist ohnehin nur über die Geräte-CLI nutzbar.
+
+## Makros
+
+Makros führen Eingaben abhängig von der Terminal-Ausgabe aus – z.B. Login auf einem Switch, Befehlsfolgen oder wiederkehrende Abfragen. Aufruf über die Schaltfläche **Makros** in der Werkzeugleiste, das Menü **Makros** oder das ⋯-Menü eines Panes.
+
+**Schritte** (werden der Reihe nach ausgeführt):
+
+| Schritt | Wirkung |
+|---|---|
+| Warten auf Ausgabe | Hält an, bis der Text in der Ausgabe erscheint (optional regulärer Ausdruck). Zeitlimit in Sekunden (0 = unbegrenzt), danach abbrechen oder weitermachen |
+| Senden | Schickt Text an die Session, optional mit Enter. Escape-Zeichen: `\r` `\n` `\t` `\e` (Esc) `\xHH` (z.B. `\x03` = Ctrl+C) |
+| Pause | Wartet eine feste Zeit in Millisekunden |
+
+**Variablen:** `{{Name}}` im Sende-Text wird beim Start abgefragt (bei Namen mit „Pass“, „Kennwort“, „PIN“, „Token“ als verdecktes Feld). Die Werte werden nicht gespeichert.
+
+**Aufzeichnen:** In einem verbundenen Pane ⇧⌘R drücken (oder Makros → Aufzeichnung starten), ganz normal arbeiten, erneut ⇧⌘R. MacT-1000 erzeugt daraus „Warten auf <zuletzt angezeigter Prompt>“ + „Senden <deine Eingabe>“. Eingaben nach einer Passwort-Abfrage (`Password:`, `Kennwort:` …) werden **nicht** aufgezeichnet, sondern durch `{{Passwort}}` ersetzt. Das Ergebnis öffnet sich im Editor zum Prüfen und Speichern. Während der Aufnahme zeigt das Pane „● Aufnahme“.
+
+**Ausführen:** Makros → ▶ Name (oder ⇧⌘M). Ist Multi-Input mit mehreren Panes aktiv, läuft das Makro in allen markierten Panes gleichzeitig. Ein laufendes Makro wird in der Pane-Kopfzeile mit Fortschritt angezeigt – Klick darauf oder ⌘. stoppt es.
+
+**Autostart:** Im Session-Dialog unter „Makro nach dem Verbinden“ ein Makro wählen – es startet bei jedem (Neu-)Verbinden dieser Session automatisch, z.B. für Login und Grundkonfiguration.
+
+**Auto-Antworten:** Makros → Auto-Antworten… Regeln „wenn die Ausgabe X enthält → sende Y“ (oder starte ein Makro), dauerhaft aktiv in allen bzw. ausgewählten Sessions (Filter auf Teile von Name/Host/Ordner, mehrere mit Komma). Beispiele: `--More--` → Leerzeichen ohne Enter, `(yes/no)?` → `yes`. Eine Regel, die mehr als 25-mal in 10 Sekunden auslöst, wird für das Pane pausiert (Schutz vor Endlosschleifen).
 
 ## Tabs und Panes per Drag & Drop
 
@@ -93,6 +116,9 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⇧⌘I | Multi-Input ein/aus |
 | ⇧⌘A | Alle Panes des Tabs für Multi-Input wählen |
 | ⇧⌘V | Multi-Paste |
+| ⇧⌘M | Makro ausführen |
+| ⇧⌘R | Makro-Aufzeichnung starten / stoppen |
+| ⌘. | Laufende Makros stoppen |
 | ⌘F | Suchen |
 | ⌘L | Terminal leeren |
 | ⌘W / ⇧⌘W | Pane / Tab schließen |
@@ -139,7 +165,7 @@ src/serial.js     Serielle Konsole (serialport)
 src/config-io.js  Export/Import der Konfiguration (inkl. Passwort-Verschlüsselung)
 src/rdp.js        RDP-Start über Windows App oder FreeRDP
 src/store.js      Sessions/Einstellungen (verschlüsselte Passwörter)
-renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser (xterm.js)
+renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Makros (xterm.js)
 test/             Unit-, Telnet-, SCP- und End-to-End-Tests
 ```
 
