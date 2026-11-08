@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.14-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.14-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.16-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.16-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -27,12 +27,13 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SSH | Nutzt das System-`ssh` → `~/.ssh/config`, Schlüssel, ssh-agent, Jump-Hosts (-J), Port-Weiterleitungen (L/R/D), Agent-/X11-Forwarding, Keepalive, Option für alte Algorithmen (ältere Switches), gespeichertes Passwort wird beim Login-Prompt automatisch eingegeben (siehe „Passwörter“) |
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
 | TFTP-Server | Seitenleisten-Tab „TFTP“: bei Bedarf in einem wählbaren Verzeichnis starten, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern. Download und optional Upload, Port und Netzwerkadresse wählbar, Fortschritt pro Übertragung (siehe unten) |
+| Update-Hinweis | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub und zeigt bei einer neuen Version einen Hinweis mit Link zur Release-Seite |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
 | RDP | Startet „Windows App“ (Microsoft, App Store) über eine erzeugte .rdp-Datei oder FreeRDP (`brew install freerdp`, Passwortabfrage im Pane). Auflösung, Multi-Monitor, Zwischenablage, Laufwerke, RD-Gateway, Admin-Session |
 | Split-Panes | Jedes Pane beliebig vertikal (nebeneinander) und horizontal (untereinander) teilbar, Trenner per Maus ziehen (Doppelklick = 50/50), Pane maximieren, gleichmäßig verteilen, Pane in neuen Tab verschieben. Tabs und Panes per Drag & Drop neu anordnen (siehe unten) |
 | Multi-Input | Tastatureingaben gehen gleichzeitig an alle markierten Panes – über Tabs hinweg. Pro Pane über das ⇶-Symbol ein-/ausschließbar. Markierte Panes sind orange umrandet |
-| Makros | Abläufe „warte auf Ausgabe → sende Eingabe“, manuell erstellen oder aufzeichnen, Variablen mit Abfrage beim Start, Autostart nach dem Verbinden, Ausführung auf mehreren Panes; Auto-Antworten auf bestimmte Ausgaben (siehe unten) |
+| Makros | Abläufe „warte auf Ausgabe → sende Eingabe“, manuell erstellen oder aufzeichnen, Variablen mit Abfrage beim Start, Schleifen über Zahlen (1,2,3 7-10) oder Texte, Autostart nach dem Verbinden, Ausführung auf mehreren Panes; Auto-Antworten auf bestimmte Ausgaben (siehe unten) |
 | Multi-Paste | Text/Befehle an ausgewählte Panes senden: als Block (Bracketed Paste) oder zeilenweise mit Verzögerung, Platzhalter `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, Verlauf der letzten 20 Einträge |
 | Session-Verwaltung | Seitenleiste mit Ordnern und beliebig tiefen Unterordnern (Rechtsklick → „Neuer Ordner…“ / „Neuer Unterordner…“, Sessions und Ordner per Drag & Drop verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration; optional gemeinsame Konfiguration auf einem Netzlaufwerk für alle Macs (siehe unten) |
 | Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen, 4 Farbschemata, Layout-Wiederherstellung |
@@ -71,9 +72,19 @@ Menü **Datei → Netzwerk-Konfiguration (gemeinsam nutzen)…** oder in den Ein
 Jede gespeicherte Konfiguration enthält die MacT-1000-Version, mit der sie geschrieben wurde – lokal (`config-meta.json`), in der Netzwerk-Datei (`appVersion`) und im Export. Zusätzlich wird die **neueste Version** vermerkt, die die Konfiguration je bearbeitet hat; so bleibt der Hinweis auch dann bestehen, wenn danach ein Mac mit älterer Version speichert.
 
 - Ist die geladene Konfiguration **neuer als die laufende MacT-1000-Version**, erscheint oben ein gelber Hinweis mit **Details** und **Ausblenden** (merkt sich die Kombination aus Konfigurations- und Programmversion). Bei der Netzwerk-Konfiguration wird das auch geprüft, wenn ein anderer Rechner mit einer neueren Version speichert; die Anzeige unten in der Seitenleiste lautet dann „Netz: neuere Version“.
-- **MacT-1000 → Konfigurationsversion…** (oder Einstellungen → „Konfigurationsversion prüfen…“) zeigt, mit welcher Version die aktuelle Konfiguration geschrieben wurde.
+- **MacT-1000 → Konfigurationsversion…** (oder Einstellungen → „Version und Updates prüfen…“) zeigt, mit welcher Version die aktuelle Konfiguration geschrieben wurde, und vergleicht die laufende Version mit dem neuesten Release auf GitHub (siehe unten).
 - Beim Import einer Export-Datei aus einer neueren Version und beim Verbinden mit einem Netzwerk-Ordner, dessen Datei neuer ist, erscheint ebenfalls ein Hinweis.
 - Konfigurationen aus Versionen bis 1.5.13 enthalten noch keine lokale Kennung und werden als „unbekannt (vor 1.5.14)“ angezeigt.
+
+## Neue Versionen (Update-Hinweis)
+
+MacT-1000 fragt kurz nach dem Start und danach alle 6 Stunden das neueste Release auf GitHub ab ([github.com/denkteich/MacT-1000/releases](https://github.com/denkteich/MacT-1000/releases), „latest“ – Vorabversionen und Entwürfe zählen nicht). Der Start wird dadurch nicht verzögert; ohne Internet passiert einfach nichts.
+
+- Ist dort eine **neuere Version** als die laufende, erscheint oben ein blauer Hinweis „Neue Version verfügbar: MacT-1000 x.y.z“ mit dem Link **Zu MacT-1000 x.y.z** (öffnet die Release-Seite im Browser), **Was ist neu?** (Release-Beschreibung), **Später** (bis zum nächsten Start) und **Überspringen** (diese Version nicht mehr melden; eine noch neuere wird wieder angezeigt).
+- **MacT-1000 → Nach Updates suchen…** prüft sofort und zeigt das Ergebnis im Fenster „Version und Konfiguration“: neuestes Release mit Link und Datum, Vergleich mit der laufenden Version („Aktuell“, „Neue Version verfügbar“ oder „Diese Version ist neuer als das letzte Release“) und Zeitpunkt der Prüfung. Schlägt die Prüfung fehl, steht dort der Grund; der zuletzt bekannte Stand bleibt sichtbar.
+- Ist die geladene **Konfiguration neuer** als die laufende Version und gibt es ein passendes Release, enthält auch der gelbe Konfigurations-Hinweis einen Link zum Download.
+- Abfrage über die GitHub-API; ist deren Limit erreicht (60 Abfragen pro Stunde und IP-Adresse), wird die Version über die Weiterleitung der Release-Seite ermittelt. Gesendet wird nur eine normale Anfrage mit der Kennung `MacT-1000/<Version>`, keine weiteren Daten.
+- Abschalten: Einstellungen → „Beim Start und alle 6 Stunden auf GitHub nach einer neuen MacT-1000-Version suchen“ (gilt nur für diesen Mac). „Nach Updates suchen…“ funktioniert weiterhin manuell.
 
 ## TFTP-Server
 
@@ -120,6 +131,14 @@ Makros führen Eingaben abhängig von der Terminal-Ausgabe aus – z.B. Login au
 **Bestätigung vor dem Start:** Im Makro-Editor „Vor dem Start bestätigen“ anhaken, optional mit eigenem Hinweistext (z.B. „Achtung: lädt die Konfiguration neu“). Vor jedem Start erscheint dann ein Dialog mit Ziel-Pane(s) und einer Vorschau der Schritte; erst nach „Ausführen“ wird etwas gesendet. Gilt auch für den Autostart nach dem Verbinden und für Makros, die von einer Auto-Antwort gestartet werden – dort wird die Ausgabe schon mitgelesen, gesendet wird aber erst nach der Bestätigung. Bei mehreren Multi-Input-Panes wird einmal für alle gefragt.
 
 **Variablen:** `{{Name}}` im Sende-Text wird beim Start abgefragt (bei Namen mit „Pass“, „Kennwort“, „PIN“, „Token“ als verdecktes Feld). Die Werte werden nicht gespeichert.
+
+**Schleifen:** Im Makro-Editor „+ Schleife“ anlegen (oder einen Schritt auf „Schleife“ / „Schleifenende“ umstellen). Alle Schritte zwischen „Schleife“ und „Schleifenende“ laufen einmal je Wert; mit ↑/↓ werden Schritte in die Schleife hinein- oder herausgeschoben, der Editor rückt den Rumpf ein. Schleifen lassen sich verschachteln.
+
+- **Zahlen:** durch Komma, Semikolon oder Leerzeichen getrennt, Bereiche mit Bindestrich – z.B. `1,2,3 7-10` → 1, 2, 3, 7, 8, 9, 10. Absteigend `10-1`, mit Schrittweite `0-100/10`, mit führenden Nullen `01-12` → 01 … 12.
+- **Texte:** durch Komma getrennt, Leerzeichen am Rand werden entfernt – z.B. `Gi1/0/1, Gi1/0/5, uplink`. Ein Komma im Wert als `\,`.
+- **Verwendung:** Im Rumpf steht der aktuelle Wert als `{{Name}}` zur Verfügung, `{{Name#}}` ist die Nummer des Durchlaufs (1, 2, 3 …). Das gilt für „Senden“ und „Warten auf Ausgabe“. Beispiel: Schleife `{{Port}}` über `1-24` → `Senden interface Gi1/0/{{Port}}` → `Warten auf „(config-if)#“` → `Senden shutdown` → Schleifenende.
+- **Werte beim Start abfragen:** Die Werteliste darf selbst eine Variable enthalten, z.B. `{{Ports}}` – sie wird beim Start wie jede andere Variable abgefragt (Eingabe z.B. `3,5,9-12`).
+- Der Editor zeigt neben jeder Schleife die Anzahl der Durchläufe (Tooltip: die Werte) und markiert Fehler; ungültige Angaben werden beim Speichern abgewiesen, zur Laufzeit stoppt das Makro mit Meldung. Die Pane-Kopfzeile zeigt den aktuellen Wert, z.B. `▶ Ports 3/5 · Port=7 (5/12)`. Maximal 10.000 Werte je Schleife.
 
 **Aufzeichnen:** In einem verbundenen Pane ⇧⌘R drücken (oder Makros → Aufzeichnung starten), ganz normal arbeiten, erneut ⇧⌘R. MacT-1000 erzeugt daraus „Warten auf <zuletzt angezeigter Prompt>“ + „Senden <deine Eingabe>“. Eingaben nach einer Passwort-Abfrage (`Password:`, `Kennwort:` …) werden **nicht** aufgezeichnet, sondern durch `{{Passwort}}` ersetzt. Das Ergebnis öffnet sich im Editor zum Prüfen und Speichern. Während der Aufnahme zeigt das Pane „● Aufnahme“.
 
@@ -223,7 +242,8 @@ src/shared.js     Gemeinsame Konfiguration: Sperre, Überwachung, Offline-Abglei
 src/merge3.js     3-Wege-Zusammenführung gleichzeitiger Änderungen
 src/tftp.js       TFTP-Server (RFC 1350, blksize/tsize/timeout)
 src/version.js    Versionsvergleich für die Konfigurationsversion
-renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Makros (xterm.js)
+src/update.js     Abfrage des neuesten Releases auf GitHub (Update-Hinweis)
+renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Makros und Makro-Schleifen (xterm.js)
 test/             Unit-, Telnet-, SCP-, TFTP- und End-to-End-Tests
 ```
 
