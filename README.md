@@ -7,7 +7,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.16-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4/M5/M6)
+   - `MacT-1000-1.5.16-arm64-mac.zip` – Apple Silicon (M Serie)
    - `MacT-1000-1.5.16-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
