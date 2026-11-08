@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.11-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.11-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.14-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.14-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -26,6 +26,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SSH-Schlüssel & Schlüsselbund | Option pro Session (Standard: an): Passphrase wird beim ersten Verbinden im macOS-Schlüsselbund gespeichert (`UseKeychain`/`AddKeysToAgent`) und danach automatisch genutzt. Zusätzlich: Ablage → „SSH-Schlüssel im Schlüsselbund hinterlegen…“ und beim Start `ssh-add --apple-load-keychain` |
 | SSH | Nutzt das System-`ssh` → `~/.ssh/config`, Schlüssel, ssh-agent, Jump-Hosts (-J), Port-Weiterleitungen (L/R/D), Agent-/X11-Forwarding, Keepalive, Option für alte Algorithmen (ältere Switches), gespeichertes Passwort wird beim Login-Prompt automatisch eingegeben (siehe „Passwörter“) |
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
+| TFTP-Server | Seitenleisten-Tab „TFTP“: bei Bedarf in einem wählbaren Verzeichnis starten, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern. Download und optional Upload, Port und Netzwerkadresse wählbar, Fortschritt pro Übertragung (siehe unten) |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
 | RDP | Startet „Windows App“ (Microsoft, App Store) über eine erzeugte .rdp-Datei oder FreeRDP (`brew install freerdp`, Passwortabfrage im Pane). Auflösung, Multi-Monitor, Zwischenablage, Laufwerke, RD-Gateway, Admin-Session |
@@ -33,7 +34,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | Multi-Input | Tastatureingaben gehen gleichzeitig an alle markierten Panes – über Tabs hinweg. Pro Pane über das ⇶-Symbol ein-/ausschließbar. Markierte Panes sind orange umrandet |
 | Makros | Abläufe „warte auf Ausgabe → sende Eingabe“, manuell erstellen oder aufzeichnen, Variablen mit Abfrage beim Start, Autostart nach dem Verbinden, Ausführung auf mehreren Panes; Auto-Antworten auf bestimmte Ausgaben (siehe unten) |
 | Multi-Paste | Text/Befehle an ausgewählte Panes senden: als Block (Bracketed Paste) oder zeilenweise mit Verzögerung, Platzhalter `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, Verlauf der letzten 20 Einträge |
-| Session-Verwaltung | Seitenleiste mit Ordnern (Rechtsklick → „Neuer Ordner…“, Sessions per Drag & Drop in Ordner verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration; optional gemeinsame Konfiguration auf einem Netzlaufwerk für alle Macs (siehe unten) |
+| Session-Verwaltung | Seitenleiste mit Ordnern und beliebig tiefen Unterordnern (Rechtsklick → „Neuer Ordner…“ / „Neuer Unterordner…“, Sessions und Ordner per Drag & Drop verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration; optional gemeinsame Konfiguration auf einem Netzlaufwerk für alle Macs (siehe unten) |
 | Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen, 4 Farbschemata, Layout-Wiederherstellung |
 
 ## Konfiguration exportieren / importieren
@@ -60,8 +61,29 @@ Menü **Datei → Netzwerk-Konfiguration (gemeinsam nutzen)…** oder in den Ein
 - **Gleichzeitige Änderungen gehen nicht verloren:** Es wird pro Session, pro Makro und pro Ordner zusammengeführt. Ändern zwei Rechner dieselbe Session, werden unterschiedliche Felder beide übernommen; nur bei demselben Feld gewinnt die zuletzt gespeicherte Änderung.
 - **Netzlaufwerk nicht erreichbar:** MacT-1000 arbeitet mit dem zuletzt bekannten Stand weiter, Änderungen werden lokal vorgemerkt (Anzeige „Netz: ausstehend“ unten in der Seitenleiste) und beim nächsten Kontakt automatisch abgeglichen.
 - **Passwörter:** Standardmäßig bleiben gespeicherte Passwörter auf jedem Mac lokal (Schlüsselbund-verschlüsselt). Mit einer **Team-Passphrase** (auf allen Macs gleich eintragen) werden sie zusätzlich AES-256-GCM-verschlüsselt in der gemeinsamen Datei abgelegt. Macs ohne Passphrase sehen die Passwörter nicht, überschreiben sie aber auch nicht.
-- Beim Aktivieren mit vorhandener Datei: **Zusammenführen**, **Datei übernehmen** oder **Lokale Konfiguration hochladen**. Vor jedem Schreiben wird die vorige Version als `MacT-1000-config.bak.json` gesichert.
+- Beim Aktivieren mit vorhandener Datei: **Zusammenführen**, **Datei übernehmen** oder **Lokale Konfiguration hochladen**. Vor jeder Änderung wird die vorige Version mit Datum und Uhrzeit im Unterordner `MacT-1000-Backups/` gesichert, z. B. `MacT-1000-config_2026-11-08_14-30-05_rev42.json`.
+- **Backups behalten**: einstellbar im Dialog Netzwerk-Konfiguration (Standard **15**, `0` = keine Backups, max. 500). Ältere Backups werden automatisch gelöscht. Der Wert gilt für alle Rechner. **Im Finder zeigen** öffnet den Backup-Ordner.
+- Wiederherstellen: gewünschtes Backup als `MacT-1000-config.json` in den Netzwerkordner zurückkopieren – alle Rechner übernehmen es automatisch.
 - **Trennen** übernimmt den aktuellen gemeinsamen Stand als lokale Konfiguration dieses Macs.
+
+## Konfigurationsversion
+
+Jede gespeicherte Konfiguration enthält die MacT-1000-Version, mit der sie geschrieben wurde – lokal (`config-meta.json`), in der Netzwerk-Datei (`appVersion`) und im Export. Zusätzlich wird die **neueste Version** vermerkt, die die Konfiguration je bearbeitet hat; so bleibt der Hinweis auch dann bestehen, wenn danach ein Mac mit älterer Version speichert.
+
+- Ist die geladene Konfiguration **neuer als die laufende MacT-1000-Version**, erscheint oben ein gelber Hinweis mit **Details** und **Ausblenden** (merkt sich die Kombination aus Konfigurations- und Programmversion). Bei der Netzwerk-Konfiguration wird das auch geprüft, wenn ein anderer Rechner mit einer neueren Version speichert; die Anzeige unten in der Seitenleiste lautet dann „Netz: neuere Version“.
+- **MacT-1000 → Konfigurationsversion…** (oder Einstellungen → „Konfigurationsversion prüfen…“) zeigt, mit welcher Version die aktuelle Konfiguration geschrieben wurde.
+- Beim Import einer Export-Datei aus einer neueren Version und beim Verbinden mit einem Netzwerk-Ordner, dessen Datei neuer ist, erscheint ebenfalls ein Hinweis.
+- Konfigurationen aus Versionen bis 1.5.13 enthalten noch keine lokale Kennung und werden als „unbekannt (vor 1.5.14)“ angezeigt.
+
+## TFTP-Server
+
+Seitenleisten-Tab **TFTP** (oder ⌥⌘T): Verzeichnis wählen, Port (Standard 69) und Netzwerkadresse festlegen (alle Netzwerke, eine bestimmte Schnittstelle oder nur dieser Mac), **Starten**. Der Server läuft nur, solange er gestartet ist, und wird beim Beenden von MacT-1000 gestoppt. Unten in der Session-Liste zeigt „TFTP läuft“ den Zustand an.
+
+- **Download** (Gerät holt Datei vom Mac, z. B. Firmware): immer erlaubt, nur innerhalb des gewählten Verzeichnisses (inkl. Unterordnern). `..`, absolute Pfade und Symlinks nach außen werden abgewiesen.
+- **Upload** (Gerät legt Datei auf dem Mac ab, z. B. `copy running-config tftp://…`): nur mit „Hochladen auf den Mac erlauben“; vorhandene Dateien werden nur mit „Vorhandene Dateien überschreiben“ ersetzt. Unterordner im Dateinamen werden angelegt. Die Datei erscheint erst nach vollständiger Übertragung (vorher als versteckte Teildatei).
+- Protokoll: RFC 1350 mit Optionen `blksize`, `tsize`, `timeout` (RFC 2347–2349), Modi `octet` und `netascii`, Dateien über 32 MB (Blocknummer-Überlauf), Wiederholung bei Paketverlust.
+- Liste **Übertragungen** mit Fortschritt, Gegenstelle und Fehlermeldung; die angezeigte Adresse samt Beispielbefehl lässt sich per Klick kopieren.
+- Hinweise: Beim ersten Start fragt die macOS-Firewall ggf., ob eingehende Verbindungen erlaubt werden. Ist Port 69 belegt (z. B. weil der macOS-eigene `tftpd` aktiviert wurde) oder nicht erlaubt, erscheint eine Meldung – dann einen anderen Port (z. B. 6969) verwenden und am Gerät angeben.
 
 ## Dateiübertragung per SCP
 
@@ -153,6 +175,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⌘W / ⇧⌘W | Pane / Tab schließen |
 | ⌘B | Seitenleiste ein/aus |
 | ⇧⌘F | Datei-Browser (SCP) für das aktive SSH-Pane |
+| ⌥⌘T | TFTP-Server anzeigen |
 | ⌘+ / ⌘- / ⌘0 | Schriftgröße |
 | ⌥← / ⌥→ | Wort zurück/vor (Zeilenanfang/-ende: fn← / fn→ oder Ctrl+A / Ctrl+E) |
 
@@ -162,7 +185,9 @@ Beendete Sessions lassen sich mit ⌘R neu verbinden (Enter löst bewusst nichts
 
 - **Anlegen:** Rechtsklick in die Session-Liste (freie Fläche, auf einen Ordner oder eine Session) → „Neuer Ordner…“. Neue Ordner sind zunächst leer und bleiben auch leer bestehen.
 - **Verschieben:** Session mit der Maus auf einen Ordner ziehen (der Ordner wird blau markiert). Auf eine Session in einem Ordner ziehen geht auch. Auf „Sessions (ohne Ordner)“ oder auf die freie Fläche ziehen nimmt die Session aus dem Ordner. Alternativ Rechtsklick auf die Session → „In Ordner verschieben…“.
-- **Ordner-Rechtsklick:** Alle als Kacheln öffnen, neue Session direkt in diesem Ordner, umbenennen, löschen. Beim Löschen werden die enthaltenen Sessions nicht gelöscht, sondern nach „Sessions“ verschoben.
+- **Unterordner:** Rechtsklick auf einen Ordner → „Neuer Unterordner…“ (im Dialog lässt sich der Oberordner auch frei wählen). Beliebig tief verschachtelbar, z. B. `Rechenzentrum › Core › Switche`. Im Session-Dialog kann der Ordner auch als Pfad eingetippt werden: `Rechenzentrum/Core/Switche` – fehlende Ordner werden automatisch angelegt. Ordnernamen dürfen deshalb kein „/“ enthalten.
+- **Ordner verschieben:** einen Ordner auf einen anderen ziehen macht ihn (samt Inhalt und Unterordnern) zum Unterordner; auf „Sessions (ohne Ordner)“ ziehen oder Rechtsklick → „Auf oberste Ebene verschieben“ holt ihn nach oben. Jeder Ordner lässt sich einzeln einklappen; die Zahl am Ordner zählt alle Sessions inklusive Unterordnern.
+- **Ordner-Rechtsklick:** Alle als Kacheln öffnen (inklusive Unterordner), neue Session direkt in diesem Ordner, neuer Unterordner, umbenennen, löschen. Umbenennen eines Oberordners passt alle Unterordner und Sessions mit an. Beim Löschen werden die enthaltenen Sessions und Unterordner nicht gelöscht, sondern eine Ebene nach oben verschoben (bei einem Ordner der obersten Ebene nach „Sessions“).
 - Sessions aus der Liste auf ein Pane zu ziehen öffnet sie wie bisher.
 - Leere Ordner werden in den Einstellungen gespeichert und beim Konfigurations-Export mitgenommen.
 
@@ -196,8 +221,10 @@ src/rdp.js        RDP-Start über Windows App oder FreeRDP
 src/store.js      Sessions/Einstellungen (verschlüsselte Passwörter), lokal oder Netzlaufwerk
 src/shared.js     Gemeinsame Konfiguration: Sperre, Überwachung, Offline-Abgleich
 src/merge3.js     3-Wege-Zusammenführung gleichzeitiger Änderungen
+src/tftp.js       TFTP-Server (RFC 1350, blksize/tsize/timeout)
+src/version.js    Versionsvergleich für die Konfigurationsversion
 renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Makros (xterm.js)
-test/             Unit-, Telnet-, SCP- und End-to-End-Tests
+test/             Unit-, Telnet-, SCP-, TFTP- und End-to-End-Tests
 ```
 
 Daten liegen unter `~/Library/Application Support/MacT-1000/`.
