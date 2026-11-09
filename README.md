@@ -2,13 +2,13 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste.
+Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups.
 
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.16-arm64-mac.zip` – Apple Silicon (M Serie)
-   - `MacT-1000-1.5.16-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.17-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.17-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -26,7 +26,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SSH-Schlüssel & Schlüsselbund | Option pro Session (Standard: an): Passphrase wird beim ersten Verbinden im macOS-Schlüsselbund gespeichert (`UseKeychain`/`AddKeysToAgent`) und danach automatisch genutzt. Zusätzlich: Ablage → „SSH-Schlüssel im Schlüsselbund hinterlegen…“ und beim Start `ssh-add --apple-load-keychain` |
 | SSH | Nutzt das System-`ssh` → `~/.ssh/config`, Schlüssel, ssh-agent, Jump-Hosts (-J), Port-Weiterleitungen (L/R/D), Agent-/X11-Forwarding, Keepalive, Option für alte Algorithmen (ältere Switches), gespeichertes Passwort wird beim Login-Prompt automatisch eingegeben (siehe „Passwörter“) |
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
-| TFTP-Server | Seitenleisten-Tab „TFTP“: bei Bedarf in einem wählbaren Verzeichnis starten, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern. Download und optional Upload, Port und Netzwerkadresse wählbar, Fortschritt pro Übertragung (siehe unten) |
+| Server (TFTP, FTP, HTTP, SFTP/SCP) | Seitenleisten-Tab „Server“: vier Dateiserver, jeder einzeln konfigurierbar und startbar – Verzeichnis, Port, Netzwerkadresse, Benutzer/Passwort, Rechte (Lesen, Hochladen, Überschreiben, Löschen). Gemeinsame Liste der Übertragungen mit Fortschritt, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern |
 | Update-Hinweis | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub und zeigt bei einer neuen Version einen Hinweis mit Link zur Release-Seite |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
@@ -86,15 +86,25 @@ MacT-1000 fragt kurz nach dem Start und danach alle 6 Stunden das neueste Releas
 - Abfrage über die GitHub-API; ist deren Limit erreicht (60 Abfragen pro Stunde und IP-Adresse), wird die Version über die Weiterleitung der Release-Seite ermittelt. Gesendet wird nur eine normale Anfrage mit der Kennung `MacT-1000/<Version>`, keine weiteren Daten.
 - Abschalten: Einstellungen → „Beim Start und alle 6 Stunden auf GitHub nach einer neuen MacT-1000-Version suchen“ (gilt nur für diesen Mac). „Nach Updates suchen…“ funktioniert weiterhin manuell.
 
-## TFTP-Server
+## Server (TFTP, FTP, HTTP, SFTP/SCP)
 
-Seitenleisten-Tab **TFTP** (oder ⌥⌘T): Verzeichnis wählen, Port (Standard 69) und Netzwerkadresse festlegen (alle Netzwerke, eine bestimmte Schnittstelle oder nur dieser Mac), **Starten**. Der Server läuft nur, solange er gestartet ist, und wird beim Beenden von MacT-1000 gestoppt. Unten in der Session-Liste zeigt „TFTP läuft“ den Zustand an.
+Seitenleisten-Tab **Server** (oder ⌥⌘T, Menü **Ansicht → Server anzeigen**). Jeder Server hat eine eigene Karte – Klick auf die Kopfzeile klappt die Einstellungen auf, **Start**/**Stopp** in der Kopfzeile startet oder stoppt ihn direkt. Die Server laufen nur, solange sie gestartet sind, und werden beim Beenden von MacT-1000 gestoppt. Unten in der Session-Liste zeigt „Server: FTP, SFTP/SCP“ an, welche gerade laufen.
 
-- **Download** (Gerät holt Datei vom Mac, z. B. Firmware): immer erlaubt, nur innerhalb des gewählten Verzeichnisses (inkl. Unterordnern). `..`, absolute Pfade und Symlinks nach außen werden abgewiesen.
-- **Upload** (Gerät legt Datei auf dem Mac ab, z. B. `copy running-config tftp://…`): nur mit „Hochladen auf den Mac erlauben“; vorhandene Dateien werden nur mit „Vorhandene Dateien überschreiben“ ersetzt. Unterordner im Dateinamen werden angelegt. Die Datei erscheint erst nach vollständiger Übertragung (vorher als versteckte Teildatei).
-- Protokoll: RFC 1350 mit Optionen `blksize`, `tsize`, `timeout` (RFC 2347–2349), Modi `octet` und `netascii`, Dateien über 32 MB (Blocknummer-Überlauf), Wiederholung bei Paketverlust.
-- Liste **Übertragungen** mit Fortschritt, Gegenstelle und Fehlermeldung; die angezeigte Adresse samt Beispielbefehl lässt sich per Klick kopieren.
-- Hinweise: Beim ersten Start fragt die macOS-Firewall ggf., ob eingehende Verbindungen erlaubt werden. Ist Port 69 belegt (z. B. weil der macOS-eigene `tftpd` aktiviert wurde) oder nicht erlaubt, erscheint eine Meldung – dann einen anderen Port (z. B. 6969) verwenden und am Gerät angeben.
+Für alle Server gilt:
+
+- **Verzeichnis**, **Port** und **Adresse** (alle Netzwerke, eine bestimmte Schnittstelle oder nur dieser Mac) sind wählbar; die Einstellungen werden pro Mac gespeichert (nicht in der Netzwerk-Konfiguration).
+- Zugriff nur innerhalb des gewählten Verzeichnisses (inkl. Unterordnern). `..`, absolute Pfade und Symlinks nach außen werden abgewiesen.
+- **Rechte:** Standard ist nur Lesen. „Hochladen und Ordner anlegen“, „Vorhandene überschreiben“ und „Löschen und Umbenennen“ lassen sich einzeln freigeben. Hochgeladene Dateien erscheinen erst nach vollständiger Übertragung (vorher als versteckte Teildatei).
+- **Passwörter** werden lokal verschlüsselt gespeichert (macOS-Schlüsselbund); das Feld zeigt dann „gespeichert“. Leer lassen = gespeichertes Passwort weiter verwenden.
+- Liste **Übertragungen** für alle Server gemeinsam (mit Kennzeichnung TFTP/FTP/HTTP/SFTP/SCP), inkl. fehlgeschlagener Anmeldungen. Die angezeigte Adresse und Beispielbefehle lassen sich per Klick kopieren.
+- Beim ersten Start fragt die macOS-Firewall ggf., ob eingehende Verbindungen erlaubt werden. Ist ein Port belegt (z. B. durch die macOS-Dienste `tftpd` oder „Entfernte Anmeldung“ auf Port 22), erscheint eine Meldung – dann einen anderen Port wählen.
+
+| Server | Standard-Port | Details |
+|---|---|---|
+| TFTP | 69 | RFC 1350 mit Optionen `blksize`, `tsize`, `timeout` (RFC 2347–2349), Modi `octet` und `netascii`, Dateien über 32 MB, Wiederholung bei Paketverlust. Ohne Anmeldung. Beispiel: `copy running-config tftp://<IP-des-Mac>/` |
+| FTP | 21 | Benutzer/Passwort und/oder anonyme Anmeldung (anonym nur Lesen). Passiv (PASV/EPSV) und aktiv (PORT/EPRT), `LIST`/`NLST`/`MLSD`, Fortsetzen (`REST`), Ordner anlegen/löschen, Umbenennen. Datenverbindungen nur von/zu der IP-Adresse des angemeldeten Clients. Hinweis: FTP überträgt Passwörter unverschlüsselt. |
+| HTTP | 8080 | Verzeichnisliste im Browser (abschaltbar, dann wird `index.html` ausgeliefert), Download mit Fortsetzen (Range), optional Benutzer/Passwort (Basic-Auth; Benutzer leer = ohne Anmeldung). Hochladen per `PUT`/`POST` (`curl -T datei.bin http://<IP>:8080/`) oder per Drag & Drop in der Verzeichnisliste, Löschen per `DELETE`. |
+| SFTP/SCP | 2222 | Verschlüsselt über SSH: SFTP und klassisches SCP (`scp -O`, wie es Switches und Router verwenden), auch rekursiv. Anmeldung mit Benutzer/Passwort und/oder öffentlichen Schlüsseln (Feld im `authorized_keys`-Format). Eigener Host-Schlüssel (ed25519), wird beim ersten Start erzeugt und bleibt erhalten; der Fingerabdruck wird angezeigt. Kein Shell-Zugang – andere Befehle werden abgewiesen. Beispiele: `sftp -P 2222 benutzer@<IP>`, `scp -O -P 2222 datei.bin benutzer@<IP>:/` |
 
 ## Dateiübertragung per SCP
 
@@ -194,7 +204,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 | ⌘W / ⇧⌘W | Pane / Tab schließen |
 | ⌘B | Seitenleiste ein/aus |
 | ⇧⌘F | Datei-Browser (SCP) für das aktive SSH-Pane |
-| ⌥⌘T | TFTP-Server anzeigen |
+| ⌥⌘T | Server anzeigen (TFTP, FTP, HTTP, SFTP/SCP) |
 | ⌘+ / ⌘- / ⌘0 | Schriftgröße |
 | ⌥← / ⌥→ | Wort zurück/vor (Zeilenanfang/-ende: fn← / fn→ oder Ctrl+A / Ctrl+E) |
 
@@ -241,10 +251,14 @@ src/store.js      Sessions/Einstellungen (verschlüsselte Passwörter), lokal od
 src/shared.js     Gemeinsame Konfiguration: Sperre, Überwachung, Offline-Abgleich
 src/merge3.js     3-Wege-Zusammenführung gleichzeitiger Änderungen
 src/tftp.js       TFTP-Server (RFC 1350, blksize/tsize/timeout)
+src/srv-common.js Gemeinsame Teile der Dateiserver: Verzeichnisschutz, Übertragungsprotokoll
+src/ftp-server.js FTP-Server (aktiv/passiv, MLSD, REST)
+src/http-server.js HTTP-Server (Verzeichnisliste, Range, PUT/POST/DELETE, Basic-Auth)
+src/ssh-server.js SFTP-/SCP-Server (Bibliothek ssh2)
 src/version.js    Versionsvergleich für die Konfigurationsversion
 src/update.js     Abfrage des neuesten Releases auf GitHub (Update-Hinweis)
-renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Makros und Makro-Schleifen (xterm.js)
-test/             Unit-, Telnet-, SCP-, TFTP- und End-to-End-Tests
+renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Server-Tab, Makros und Makro-Schleifen (xterm.js)
+test/             Unit-, Telnet-, SCP-, Server- und End-to-End-Tests
 ```
 
 Daten liegen unter `~/Library/Application Support/MacT-1000/`.
@@ -252,3 +266,11 @@ Daten liegen unter `~/Library/Application Support/MacT-1000/`.
 ### Umstieg von MacTerm (bis 1.4.0)
 
 Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordner und Layout aus `~/Library/Application Support/MacTerm/`. Ausnahme: **in der App gespeicherte Passwörter** – sie sind mit einem Schlüssel verschlüsselt, der an den App-Namen gebunden ist, und müssen einmalig neu eingegeben werden. Alternativ in MacTerm „Konfiguration exportieren“ mit Passwörtern wählen und in MacT-1000 importieren. SSH-Schlüssel-Passphrasen im macOS-Schlüsselbund sind nicht betroffen. Die alte `MacTerm.app` kann danach gelöscht werden.
+
+## Lizenz
+
+MacT-1000 steht unter der [MIT-Lizenz](LICENSE) – Copyright (c) 2026 Harald Thomas.
+
+Kurz gesagt: Nutzen, kopieren, ändern und weitergeben (auch kommerziell) ist erlaubt, solange der Copyright-Hinweis und der Lizenztext erhalten bleiben. Die Software wird ohne Gewährleistung bereitgestellt.
+
+Verwendete Bibliotheken und ihre Lizenzen (alle MIT): Electron, xterm.js, node-pty, serialport, ssh2. Electron bringt zusätzlich die Lizenzen von Chromium mit (`LICENSES.chromium.html` im App-Paket).
