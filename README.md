@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.17-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.17-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.18-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.18-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -27,7 +27,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SSH | Nutzt das System-`ssh` → `~/.ssh/config`, Schlüssel, ssh-agent, Jump-Hosts (-J), Port-Weiterleitungen (L/R/D), Agent-/X11-Forwarding, Keepalive, Option für alte Algorithmen (ältere Switches), gespeichertes Passwort wird beim Login-Prompt automatisch eingegeben (siehe „Passwörter“) |
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
 | Server (TFTP, FTP, HTTP, SFTP/SCP) | Seitenleisten-Tab „Server“: vier Dateiserver, jeder einzeln konfigurierbar und startbar – Verzeichnis, Port, Netzwerkadresse, Benutzer/Passwort, Rechte (Lesen, Hochladen, Überschreiben, Löschen). Gemeinsame Liste der Übertragungen mit Fortschritt, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern |
-| Update-Hinweis | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub und zeigt bei einer neuen Version einen Hinweis mit Link zur Release-Seite |
+| Update | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub, lädt eine neue Version automatisch herunter (SHA-256 geprüft), installiert sie nach Rückfrage und startet neu |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
 | RDP | Startet „Windows App“ (Microsoft, App Store) über eine erzeugte .rdp-Datei oder FreeRDP (`brew install freerdp`, Passwortabfrage im Pane). Auflösung, Multi-Monitor, Zwischenablage, Laufwerke, RD-Gateway, Admin-Session |
@@ -76,15 +76,33 @@ Jede gespeicherte Konfiguration enthält die MacT-1000-Version, mit der sie gesc
 - Beim Import einer Export-Datei aus einer neueren Version und beim Verbinden mit einem Netzwerk-Ordner, dessen Datei neuer ist, erscheint ebenfalls ein Hinweis.
 - Konfigurationen aus Versionen bis 1.5.13 enthalten noch keine lokale Kennung und werden als „unbekannt (vor 1.5.14)“ angezeigt.
 
-## Neue Versionen (Update-Hinweis)
+## Neue Versionen (Update-Hinweis und automatisches Update)
 
 MacT-1000 fragt kurz nach dem Start und danach alle 6 Stunden das neueste Release auf GitHub ab ([github.com/denkteich/MacT-1000/releases](https://github.com/denkteich/MacT-1000/releases), „latest“ – Vorabversionen und Entwürfe zählen nicht). Der Start wird dadurch nicht verzögert; ohne Internet passiert einfach nichts.
 
-- Ist dort eine **neuere Version** als die laufende, erscheint oben ein blauer Hinweis „Neue Version verfügbar: MacT-1000 x.y.z“ mit dem Link **Zu MacT-1000 x.y.z** (öffnet die Release-Seite im Browser), **Was ist neu?** (Release-Beschreibung), **Später** (bis zum nächsten Start) und **Überspringen** (diese Version nicht mehr melden; eine noch neuere wird wieder angezeigt).
+- Ist dort eine **neuere Version** als die laufende, erscheint oben ein blauer Hinweis „Neue Version verfügbar: MacT-1000 x.y.z“ mit **Jetzt aktualisieren**, dem Link **Release-Seite** (öffnet die Release-Seite im Browser), **Was ist neu?** (Release-Beschreibung), **Später** (bis zum nächsten Start) und **Überspringen** (diese Version nicht mehr melden; eine noch neuere wird wieder angezeigt).
 - **MacT-1000 → Nach Updates suchen…** prüft sofort und zeigt das Ergebnis im Fenster „Version und Konfiguration“: neuestes Release mit Link und Datum, Vergleich mit der laufenden Version („Aktuell“, „Neue Version verfügbar“ oder „Diese Version ist neuer als das letzte Release“) und Zeitpunkt der Prüfung. Schlägt die Prüfung fehl, steht dort der Grund; der zuletzt bekannte Stand bleibt sichtbar.
 - Ist die geladene **Konfiguration neuer** als die laufende Version und gibt es ein passendes Release, enthält auch der gelbe Konfigurations-Hinweis einen Link zum Download.
 - Abfrage über die GitHub-API; ist deren Limit erreicht (60 Abfragen pro Stunde und IP-Adresse), wird die Version über die Weiterleitung der Release-Seite ermittelt. Gesendet wird nur eine normale Anfrage mit der Kennung `MacT-1000/<Version>`, keine weiteren Daten.
 - Abschalten: Einstellungen → „Beim Start und alle 6 Stunden auf GitHub nach einer neuen MacT-1000-Version suchen“ (gilt nur für diesen Mac). „Nach Updates suchen…“ funktioniert weiterhin manuell.
+
+### Automatisches Update (ab 1.5.18)
+
+1. Wird eine neuere Version gefunden, lädt MacT-1000 im Hintergrund das passende Paket aus dem Release (`MacT-1000-<Version>-arm64-mac.zip` für Apple Silicon bzw. `…-x64-mac.zip` für Intel; auch unter Rosetta wird das arm64-Paket gewählt). Der Hinweis zeigt den Fortschritt („wird geladen … 45 % (40,1 von 98,0 MB)“) und **Abbrechen**.
+2. Geprüft werden Größe und **SHA-256-Prüfsumme** (von GitHub zu jedem Release-Paket veröffentlicht) sowie die Versionsnummer in der `Info.plist` der entpackten App. Stimmt etwas nicht, wird das Update verworfen und der Grund angezeigt (**Erneut versuchen** / Release-Seite). Heruntergeladen wird nur von github.com.
+3. Ist alles in Ordnung, fragt MacT-1000: „Jetzt installieren und neu starten?“ – mit Hinweis auf noch aktive Verbindungen.
+   - **Jetzt neu starten:** MacT-1000 beendet sich, ein kleines Hilfsskript tauscht `MacT-1000.app` aus (die alte Version wird erst gelöscht, wenn die neue an ihrem Platz ist, bei einem Fehler wird sie wiederhergestellt) und startet die neue Version. Danach erscheint „MacT-1000 wurde von a auf b aktualisiert“.
+   - **Später:** Das Update wird beim nächsten normalen Beenden installiert (ohne Neustart). Bis dahin steht im grünen Hinweis bzw. im Fenster „Version und Konfiguration“ **Neu starten und installieren**.
+4. Gehört der Programmordner nicht dem angemeldeten Benutzer (z. B. Standardbenutzer ohne Schreibrecht in `/Programme`), fragt macOS beim Austausch nach dem **Administrator-Passwort**.
+
+Hinweise:
+
+- Das automatische Update funktioniert nur, wenn die App aus einem beschreibbaren Ordner läuft (am besten `/Programme`). Wird sie direkt aus „Downloads“ gestartet, verlagert macOS sie in einen schreibgeschützten Quarantäne-Ort – dann erscheint ein Hinweis, die App zuerst nach „Programme“ zu verschieben. Von einem Disk-Image oder im Entwicklungsmodus (`npm start`) gibt es nur den Hinweis mit Link.
+- Das neue Paket ist wie bisher nur ad-hoc signiert; die Quarantäne-Markierung wird beim Austausch entfernt, damit kein Gatekeeper-Dialog erscheint.
+- Releases müssen die Pakete unter genau diesen Dateinamen enthalten, sonst bleibt es beim Hinweis mit Link.
+- Abschalten: Einstellungen → „Neue Versionen automatisch laden … und installieren“ (dann wird erst nach Klick auf **Jetzt aktualisieren** geladen und beim Beenden nichts installiert).
+- Arbeitsordner und Protokoll: `~/Library/Application Support/MacT-1000/updates/` (`install.log`). Schlägt die Installation fehl, zeigt MacT-1000 beim nächsten Start die letzten Protokollzeilen.
+- Versionen vor 1.5.18 können sich nicht selbst aktualisieren – 1.5.18 einmal von Hand installieren.
 
 ## Server (TFTP, FTP, HTTP, SFTP/SCP)
 
@@ -257,6 +275,7 @@ src/http-server.js HTTP-Server (Verzeichnisliste, Range, PUT/POST/DELETE, Basic-
 src/ssh-server.js SFTP-/SCP-Server (Bibliothek ssh2)
 src/version.js    Versionsvergleich für die Konfigurationsversion
 src/update.js     Abfrage des neuesten Releases auf GitHub (Update-Hinweis)
+src/updater.js    Automatisches Update: Download, SHA-256-Prüfung, Entpacken, Austausch nach dem Beenden
 renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Server-Tab, Makros und Makro-Schleifen (xterm.js)
 test/             Unit-, Telnet-, SCP-, Server- und End-to-End-Tests
 ```
