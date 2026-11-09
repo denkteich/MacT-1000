@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.19-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.19-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.20-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.20-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -28,7 +28,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
 | Server (TFTP, FTP, HTTP, SFTP/SCP) | Seitenleisten-Tab „Server“: vier Dateiserver, jeder einzeln konfigurierbar und startbar – Verzeichnis, Port, Netzwerkadresse, Benutzer/Passwort, Rechte (Lesen, Hochladen, Überschreiben, Löschen). Gemeinsame Liste der Übertragungen mit Fortschritt, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern |
 | Aufruf von außen | Start aus Automator, Kurzbefehlen, AppleScript oder Terminal (`mact1000 --local --run "uptime"`) und über `mact1000://`-Links – lokale Shell, SSH, Telnet, Seriell, RDP, gespeicherte Sessions und Ordner, mit Befehlen und Makros; Befehle nur nach Rückfrage |
-| Update | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub, lädt eine neue Version automatisch herunter (SHA-256 geprüft), installiert sie nach Rückfrage und startet neu |
+| Update | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub, fragt vorher: jetzt installieren, später erinnern oder Version überspringen; lädt dann (SHA-256 geprüft), installiert nach Rückfrage und startet neu |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
 | RDP | Startet „Windows App“ (Microsoft, App Store) über eine erzeugte .rdp-Datei oder FreeRDP (`brew install freerdp`, Passwortabfrage im Pane). Auflösung, Multi-Monitor, Zwischenablage, Laufwerke, RD-Gateway, Admin-Session |
@@ -89,7 +89,12 @@ MacT-1000 fragt kurz nach dem Start und danach alle 6 Stunden das neueste Releas
 
 ### Automatisches Update (ab 1.5.18)
 
-1. Wird eine neuere Version gefunden, lädt MacT-1000 im Hintergrund das passende Paket aus dem Release (`MacT-1000-<Version>-arm64-mac.zip` für Apple Silicon bzw. `…-x64-mac.zip` für Intel; auch unter Rosetta wird das arm64-Paket gewählt). Der Hinweis zeigt den Fortschritt („wird geladen … 45 % (40,1 von 98,0 MB)“) und **Abbrechen**.
+1. Wird eine neuere Version gefunden, fragt MacT-1000 zuerst (Fenster „Neue Version: MacT-1000 x.y.z“ mit der Release-Beschreibung) – geladen wird noch nichts:
+   - **Jetzt installieren:** Das Update wird geladen (weiter mit Schritt 2).
+   - **Später erinnern:** Nichts wird geladen, der Hinweis verschwindet. Erneut gefragt wird beim nächsten Start von MacT-1000 oder, wenn das Programm durchläuft, nach 24 Stunden.
+   - **Diese Version überspringen:** Diese Version wird nicht mehr gemeldet; erst eine noch neuere Version erscheint wieder. Über **Nach Updates suchen…** lässt sie sich trotzdem jederzeit installieren.
+
+   Danach lädt MacT-1000 im Hintergrund das passende Paket aus dem Release (`MacT-1000-<Version>-arm64-mac.zip` für Apple Silicon bzw. `…-x64-mac.zip` für Intel; auch unter Rosetta wird das arm64-Paket gewählt). Der Hinweis zeigt den Fortschritt („wird geladen … 45 % (40,1 von 98,0 MB)“) und **Abbrechen**.
 2. Geprüft werden Größe und **SHA-256-Prüfsumme** (von GitHub zu jedem Release-Paket veröffentlicht) sowie die Versionsnummer in der `Info.plist` der entpackten App. Stimmt etwas nicht, wird das Update verworfen und der Grund angezeigt (**Erneut versuchen** / Release-Seite). Heruntergeladen wird nur von github.com.
 3. Ist alles in Ordnung, fragt MacT-1000: „Jetzt installieren und neu starten?“ – mit Hinweis auf noch aktive Verbindungen.
    - **Jetzt neu starten:** MacT-1000 beendet sich, ein kleines Hilfsskript tauscht `MacT-1000.app` aus (die alte Version wird erst gelöscht, wenn die neue an ihrem Platz ist, bei einem Fehler wird sie wiederhergestellt) und startet die neue Version. Danach erscheint „MacT-1000 wurde von a auf b aktualisiert“.
@@ -101,7 +106,7 @@ Hinweise:
 - Das automatische Update funktioniert nur, wenn die App aus einem beschreibbaren Ordner läuft (am besten `/Programme`). Wird sie direkt aus „Downloads“ gestartet, verlagert macOS sie in einen schreibgeschützten Quarantäne-Ort – dann erscheint ein Hinweis, die App zuerst nach „Programme“ zu verschieben. Von einem Disk-Image oder im Entwicklungsmodus (`npm start`) gibt es nur den Hinweis mit Link.
 - Das neue Paket ist wie bisher nur ad-hoc signiert; die Quarantäne-Markierung wird beim Austausch entfernt, damit kein Gatekeeper-Dialog erscheint.
 - Releases müssen die Pakete unter genau diesen Dateinamen enthalten, sonst bleibt es beim Hinweis mit Link.
-- Abschalten: Einstellungen → „Neue Versionen automatisch laden … und installieren“ (dann wird erst nach Klick auf **Jetzt aktualisieren** geladen und beim Beenden nichts installiert).
+- Abschalten: Einstellungen → „Bei neuen Versionen nachfragen … und installieren“ (dann erscheint statt der Frage nur der blaue Hinweis, geladen wird erst nach Klick auf **Jetzt aktualisieren**, beim Beenden wird nichts installiert).
 - Arbeitsordner und Protokoll: `~/Library/Application Support/MacT-1000/updates/` (`install.log`). Schlägt die Installation fehl, zeigt MacT-1000 beim nächsten Start die letzten Protokollzeilen.
 - Versionen vor 1.5.18 können sich nicht selbst aktualisieren – 1.5.18 einmal von Hand installieren.
 
