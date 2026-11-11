@@ -7,8 +7,8 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.20-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.20-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.21-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.21-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -27,7 +27,7 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
 | SSH | Nutzt das System-`ssh` → `~/.ssh/config`, Schlüssel, ssh-agent, Jump-Hosts (-J), Port-Weiterleitungen (L/R/D), Agent-/X11-Forwarding, Keepalive, Option für alte Algorithmen (ältere Switches), gespeichertes Passwort wird beim Login-Prompt automatisch eingegeben (siehe „Passwörter“) |
 | SCP-Dateiübertragung | Seitenleisten-Tab „Dateien (SCP)“ folgt dem aktiven SSH-Pane: Verzeichnisse durchsuchen, Hoch-/Herunterladen von Dateien und Ordnern mit Fortschritt, Drag & Drop aus dem Finder, Ordner anlegen, umbenennen, löschen, „Im Terminal hierhin wechseln (cd)“. Nutzt die Anmeldung der Terminal-Session mit (siehe unten) |
 | Server (TFTP, FTP, HTTP, SFTP/SCP) | Seitenleisten-Tab „Server“: vier Dateiserver, jeder einzeln konfigurierbar und startbar – Verzeichnis, Port, Netzwerkadresse, Benutzer/Passwort, Rechte (Lesen, Hochladen, Überschreiben, Löschen). Gemeinsame Liste der Übertragungen mit Fortschritt, z. B. für Firmware-Updates und Konfigurations-Backups von Switches/Routern |
-| Aufruf von außen | Start aus Automator, Kurzbefehlen, AppleScript oder Terminal (`mact1000 --local --run "uptime"`) und über `mact1000://`-Links – lokale Shell, SSH, Telnet, Seriell, RDP, gespeicherte Sessions und Ordner, mit Befehlen und Makros; Befehle nur nach Rückfrage |
+| Aufruf von außen | Start aus Automator, Kurzbefehlen, AppleScript oder Terminal (`mact1000 --local --run "uptime"`) und über `mact1000://`-Links – lokale Shell, SSH, Telnet, Seriell, RDP, gespeicherte Sessions und Ordner, mit Befehlen und Makros, Ausgabe in eine Datei und automatischem Schließen danach (`--log`, `--close`, `--quit`); Befehle nur nach Rückfrage |
 | Update | Prüft beim Start und alle 6 Stunden das neueste Release auf GitHub, fragt vorher: jetzt installieren, später erinnern oder Version überspringen; lädt dann (SHA-256 geprüft), installiert nach Rückfrage und startet neu |
 | Telnet | Eigene Implementierung mit Optionsverhandlung (ECHO, SGA, TTYPE, NAWS = Fenstergröße), Auto-Login, CR/LF-Modus, Raw-TCP für Konsolenserver, Break/Interrupt. Ist ein Passwort hinterlegt, ist Auto-Login automatisch aktiv |
 | Seriell | Alle `/dev/cu.*`-Ports, Baudrate 300–921600, Datenbits, Parität, Stoppbits, RTS/CTS bzw. XON/XOFF, Break-Signal (z. B. Cisco ROMMON), DTR/RTS umschalten, lokales Echo |
@@ -127,6 +127,8 @@ mact1000 --serial /dev/cu.usbserial-1410:115200
 mact1000 --session "Rechenzentrum/core-sw01" --macro "Backup" --var ziel=10.0.0.5
 mact1000 --folder "Rechenzentrum" --multi
 mact1000 --ssh admin@10.0.0.1 --ssh admin@10.0.0.2 --tile --multi
+mact1000 --ssh admin@10.0.0.1 --run "show running-config" --log ~/Logs/core-sw01.log --close 3
+mact1000 --local --run "brew update" --quit
 mact1000 --help
 ```
 
@@ -144,10 +146,13 @@ mact1000 --help
 | `--title NAME` | Titel des Panes |
 | `--split right\|down\|tab\|here` | Neben/unter dem aktiven Pane öffnen, neuer Tab (Standard) oder im aktiven Pane, wenn dort keine Verbindung läuft |
 | `--prompt REGEX` | Eigenes Prompt-Muster, auf das vor jedem Befehl gewartet wird (Standard: Zeile endet auf `$ # > % ]`) |
+| `--close [SEK]` | Pane nach dem letzten Befehl bzw. Makro schließen: erst auf den Prompt warten (höchstens 10 Minuten), dann schließen, sobald SEK Sekunden keine Ausgabe mehr kam (Standard 3, auch Bruchteile wie `0.5`). Beendet ein Befehl die Verbindung selbst (z. B. `exit`), schließt das Pane sofort. Bei Fehlern (Verbindung abgelehnt, Anmeldung fehlgeschlagen) bleibt es mit der Meldung offen |
+| `--log DATEI` | Ausgabe des Panes ohne Farbcodes an DATEI anhängen (vollständiger Pfad oder `~/…`; im Terminal auch relativ zum aktuellen Ordner). Ordner werden angelegt, jeder Lauf beginnt mit einer Kopfzeile mit Datum und Ziel |
 | `--tile` | Alle Ziele dieses Aufrufs als Kacheln in einem Tab |
 | `--multi` | Danach Multi-Input für den Tab einschalten |
+| `--quit` | Alle Ziele wie mit `--close` schließen und danach MacT-1000 beenden – aber nur, wenn keine anderen Sessions oder Server mehr laufen |
 
-Mehrere Ziele in einem Aufruf sind möglich; `--run`, `--macro`, `--var`, `--cwd`, `--title`, `--split` und `--prompt` gelten jeweils für das Ziel davor. Passwörter werden bewusst nicht als Argument angenommen – dafür gespeicherte Sessions, Schlüssel oder den Schlüsselbund verwenden.
+Mehrere Ziele in einem Aufruf sind möglich; `--run`, `--macro`, `--var`, `--cwd`, `--title`, `--split`, `--prompt`, `--close` und `--log` gelten jeweils für das Ziel davor. Passwörter werden bewusst nicht als Argument angenommen – dafür gespeicherte Sessions, Schlüssel oder den Schlüsselbund verwenden.
 
 ### Links `mact1000://`
 
@@ -158,21 +163,23 @@ mact1000://local?run=uptime&run=df%20-h
 mact1000://ssh/admin@10.0.0.1?run=show%20version&split=right
 mact1000://session/Rechenzentrum/core-sw01?macro=Backup&var=ziel%3D10.0.0.5
 mact1000://folder/Rechenzentrum?multi=1
+mact1000://ssh/admin@10.0.0.1?run=show%20version&close=3&log=~/Logs/sw.log
 mact1000://help
 ```
 
-Parameter wie bei der Kommandozeile ohne `--` (`run`, `macro`, `var`, `cwd`, `title`, `split`, `prompt`, `tile`, `multi`, `tabs`); Leerzeichen als `%20`. Das Schema wird von macOS registriert, sobald die App einmal gestartet wurde.
+Parameter wie bei der Kommandozeile ohne `--` (`run`, `macro`, `var`, `cwd`, `title`, `split`, `prompt`, `close`, `log`, `tile`, `multi`, `tabs`, `quit`); Leerzeichen als `%20`. Das Schema wird von macOS registriert, sobald die App einmal gestartet wurde.
 
 ### In Automator
 
 1. Automator öffnen → **Arbeitsablauf** (oder **Schnellaktion** für das Dienste-Menü bzw. eine Tastenkombination) → Aktion **Shell-Skript ausführen**.
 2. Befehl eintragen, z. B. `/Applications/MacT-1000.app/Contents/Resources/bin/mact1000 --local --run "uptime"` (oder kurz `mact1000 …`, wenn installiert).
-3. Ausführen. Fertige Vorlage: `beispiele/MacT-1000 Befehle ausführen.workflow` (außerdem eine `.command`-Datei für den Finder und ein AppleScript).
+3. Soll das Fenster danach wieder zugehen: `--close` (nur das Pane) oder `--quit` (MacT-1000 ganz beenden) anhängen, für die Ausgabe zusätzlich `--log ~/Logs/name.log`.
+4. Ausführen. Fertige Vorlage: `beispiele/MacT-1000 Befehle ausführen.workflow` (außerdem eine `.command`-Datei für den Finder und ein AppleScript).
 
 ### Sicherheit
 
 - Aufrufe, die nur eine Verbindung oder eine Shell öffnen, laufen sofort.
-- Enthält ein Aufruf **Befehle**, ein **Makro**, eine eigene Shell oder zusätzliche ssh-Argumente (`--connect "ssh -o …"`), zeigt MacT-1000 vorher genau an, was ausgeführt wird, und fragt nach. So kann z. B. ein Link auf einer Webseite nichts unbemerkt ausführen.
+- Enthält ein Aufruf **Befehle**, ein **Makro**, eine **Protokolldatei** (`--log`), eine eigene Shell oder zusätzliche ssh-Argumente (`--connect "ssh -o …"`), zeigt MacT-1000 vorher genau an, was ausgeführt wird, und fragt nach. So kann z. B. ein Link auf einer Webseite nichts unbemerkt ausführen.
 - **Genau diesen Aufruf künftig ohne Rückfrage ausführen** merkt sich einen Fingerabdruck (SHA-256) des kompletten Aufrufs – ändert sich ein Befehl oder Ziel, wird wieder gefragt. Vertraute Aufrufe stehen im Fenster „Aufruf von außen“ und lassen sich dort entfernen (gespeichert nur auf diesem Mac).
 - Unbekannte Sessions, Makros, Optionen oder ungültige Ziele: Es wird nichts geöffnet, stattdessen erscheint eine Fehlermeldung.
 - Abschalten: Einstellungen → „Aufrufe von außen erlauben …“.
