@@ -2,15 +2,13 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Das Schwesterprojekt für Windows WinT-1000 findet man hier: https://github.com/denkteich/WinT-1000
-
 Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups.
 
 ## Installation (fertige App)
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.22-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.22-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.5.23-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.5.23-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -241,7 +239,10 @@ Für alle Server gilt:
 In einem SSH-Pane auf **⇅** in der Pane-Leiste klicken (oder ⇧⌘F, oder Pane-Menü → „Dateien übertragen (SCP)…“). Links öffnet sich der Tab **Dateien (SCP)** mit dem Home-Verzeichnis des Servers.
 
 - **Navigieren:** Doppelklick auf Ordner, ↰ = eine Ebene höher, ⌂ = Home, Pfad oben eintippen + Enter
+- **Synchron mit der Shell (ab 1.5.23, Standard: an):** Wechselt man im Terminal mit `cd` das Verzeichnis, wechselt der Browser automatisch mit. Schalter **⇄** in der Werkzeugleiste (oder ⋯ → „Mit dem Verzeichnis der Shell synchron halten“, oder Einstellungen). Erkannt wird das Verzeichnis über die Pfad-Meldung OSC 7, sonst über die Prompt-Zeile (`user@host:~/pfad$`, `root@host:/etc#`) oder den Fenstertitel. Zeigt der Prompt keinen Pfad, hilft ⋯ → „Pfad-Meldung in der Shell einrichten (bash/zsh)“ – das gilt für die laufende Shell; dauerhaft dieselbe Zeile in `~/.bashrc` bzw. `~/.zshrc` eintragen. Navigiert man selbst im Browser, bleibt diese Ansicht, bis in der Shell das nächste Mal das Verzeichnis gewechselt wird. Ist das Shell-Verzeichnis für den Datei-Browser nicht lesbar (z. B. nach `sudo -i` oder ssh auf einen weiteren Host), bleibt die bisherige Liste mit einem Hinweis stehen.
+- **Direkt zur Datei springen (ab 1.5.23):** In die Liste klicken und tippen – z. B. `zus` markiert den ersten Eintrag, der mit „zus“ beginnt (sonst den ersten, der „zus“ enthält); nach einer Pause von einer Sekunde beginnt die Suche neu, dieselbe Taste mehrfach geht reihum. Außerdem: ↑/↓ markieren, Enter öffnet, ⌫ = eine Ebene höher, Esc hebt die Markierung auf.
 - **Hochladen:** „↑ Hoch“ (Dateien und Ordner wählbar) oder Dateien/Ordner aus dem Finder in die Liste ziehen – auf einen Ordner gezogen landen sie dort. Dateien direkt aufs SSH-Terminal ziehen lädt ins aktuelle Browser-Verzeichnis hoch.
+- **Herausziehen (ab 1.5.23):** Einträge (auch mehrere markierte, auch Ordner) aus der Liste in den Finder, auf den Schreibtisch oder in eine andere App ziehen. MacT-1000 lädt sie dafür erst in einen temporären Ordner; bei kleinen Dateien beginnt das Ziehen sofort, solange die Maustaste gedrückt bleibt. Wird sie vorher losgelassen (große Dateien), erscheint der Eintrag unter „Übertragungen“ mit „fertig – an das Ziel ziehen“ und lässt sich von dort ans Ziel ziehen. Erneutes Ziehen derselben, unveränderten Auswahl nutzt die bereits geladene Kopie.
 - **Herunterladen:** markieren (⌘-Klick / ⇧-Klick für mehrere) und „↓ Runter“ → Download-Ordner (Standard `~/Downloads`, änderbar in den Einstellungen oder unter ⋯). Rechtsklick → „Herunterladen nach…“ fragt den Zielordner ab. Doppelklick auf eine Datei lädt eine temporäre Kopie und öffnet sie mit der Standard-App.
 - **Weitere Aktionen (Rechtsklick):** Umbenennen, Löschen (rekursiv, mit Rückfrage), Pfad kopieren, Im Terminal hierhin wechseln (cd). Unter ⋯: versteckte Dateien anzeigen.
 - **Übertragungen** erscheinen unten mit Fortschritt, Geschwindigkeit und Restzeit; laufende lassen sich mit × abbrechen. Vor dem Überschreiben vorhandener Dateien wird gefragt.
@@ -253,6 +254,10 @@ Pro Session (Session bearbeiten) gibt es dazu zwei Optionen:
 - „Klassisches SCP-Protokoll (scp -O)“ – für Geräte ohne SFTP-Subsystem (z. B. manche Switches, Router, Dropbear). Standard ist das moderne scp über SFTP.
 
 Hinweis: Der Browser listet Verzeichnisse per `ls` in einer POSIX-Shell auf dem Server. Auf Geräten ohne Unix-Shell (z. B. Cisco IOS) funktioniert das Durchsuchen nicht; dort ist SCP meist ohnehin nur über die Geräte-CLI nutzbar.
+
+## Kopieren beim Markieren
+
+Mit der Maus markierter Text in einem Session-Fenster landet sofort in der Zwischenablage, kurz bestätigt mit „In die Zwischenablage kopiert“ (Einstellung „Markierten Text automatisch in die Zwischenablage kopieren“, Standard: an; mit 1.5.23 einmalig eingeschaltet, falls sie bisher aus war). Doppelklick markiert ein Wort, Dreifachklick eine Zeile. In Programmen mit Mausbedienung (z. B. htop, mc, vim mit Maus) beim Markieren ⌥ gedrückt halten.
 
 ## Makros
 
