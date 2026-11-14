@@ -2,6 +2,8 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
+Das Schwesterprojekt für Windows WinT-1000 findet man hier: https://github.com/denkteich/WinT-1000
+
 Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups.
 
 ## Installation (fertige App)
