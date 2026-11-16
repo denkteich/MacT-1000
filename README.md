@@ -2,15 +2,29 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Das Schwesterprojekt für Windows WinT-1000 findet man hier: https://github.com/denkteich/WinT-1000
+Version 1.6.0 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
-Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups.
+Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-/SFTP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
-## Installation (fertige App)
+Projekt und Updates: [github.com/denkteich/MacT-1000](https://github.com/denkteich/MacT-1000)
+
+> **Ab 1.6.0 ein gemeinsames Projekt:** Die Windows-Ausgabe hieß bis 1.5.23 **WinT-1000** und läuft jetzt ebenfalls unter dem Namen MacT-1000 – gleicher Quellcode, gleiche Funktionen, gleiche Versionsnummern. Wie die Daten übernommen werden, steht unter „Umstieg von WinT-1000“.
+
+## Sprache
+
+Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hinweise, Tooltips und Meldungen im Terminal.
+
+- **Standard „Automatisch (System)“:** MacT-1000 übernimmt die Sprache des Betriebssystems (macOS: Systemeinstellungen → Allgemein → Sprache & Region; Windows: Einstellungen → Zeit und Sprache). Deutsch bei deutscher Systemsprache, sonst Englisch.
+- **Umschalten:** Einstellungen (⚙) → ganz oben **„Sprache / Language“** → Automatisch (System), Deutsch oder English. Die Umstellung gilt sofort, ohne Neustart – auch für das Menü.
+- Die Einstellung gilt nur für diesen Rechner und wird nicht über die Netzwerk-Konfiguration geteilt.
+- Selbst vergebene Namen (Sessions, Ordner, Makros, Layouts) werden nicht übersetzt. Die Werte für Aufrufe von außen gibt es in beiden Sprachen (`--slot oben` = `--slot top`, `--busy neu` = `--busy new`).
+- Datum und Zahlen folgen der gewählten Sprache.
+
+## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.5.23-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.5.23-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.6.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.6.0-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -19,6 +33,41 @@ Terminal-Client für macOS – lokale Shell, SSH (mit SCP-Dateiübertragung), Te
    Alternativ: Systemeinstellungen → Datenschutz & Sicherheit → „Trotzdem öffnen“.
    Meldet macOS „beschädigt“: `codesign --force --deep --sign - /Applications/MacT-1000.app`
 4. Für serielle USB-Adapter (FTDI, Prolific, CH340, Silicon Labs) ggf. den Treiber des Herstellers installieren – viele laufen unter macOS ohne Treiber.
+
+Daten liegen unter `~/Library/Application Support/MacT-1000/`.
+
+## Installation unter Windows
+
+Windows 10/11 (64 Bit). Zwei Varianten:
+
+| | Installierbar (Setup) | Portable |
+|---|---|---|
+| Datei | `MacT-1000-1.6.0-setup.exe` | `MacT-1000-1.6.0-portable.exe` |
+| Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
+| Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
+| `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
+| Updates | automatisch: Installer laden, SHA-256 prüfen, nach Rückfrage still installieren und neu starten | nur Hinweis; „Herunterladen“ öffnet die Release-Seite, die EXE ersetzt sich nicht selbst |
+| Deinstallation | Einstellungen → Apps → MacT-1000 | EXE löschen |
+
+Beide Varianten sind nicht signiert. Windows SmartScreen meldet beim ersten Start ggf. „Der Computer wurde durch Windows geschützt“ → „Weitere Informationen“ → „Trotzdem ausführen“.
+
+Einstellungen, Sessions und Makros liegen bei beiden Varianten unter `%APPDATA%\MacT-1000` – sie bleiben beim Update und beim Wechsel zwischen Setup und portabler EXE erhalten. Die portable EXE entpackt sich beim Start in einen temporären Ordner, der erste Start dauert daher einige Sekunden.
+
+### Bedienung unter Windows
+
+Funktionen und Oberfläche sind dieselben wie unter macOS. Unterschiede:
+
+| Bereich | macOS | Windows |
+|---|---|---|
+| Lokale Shell | Login-Shell (`$SHELL`, z. B. zsh) | PowerShell 7 (`pwsh`), sonst Windows PowerShell, sonst `cmd.exe`; eigene Shell in den Einstellungen |
+| SSH | System-`ssh` | eingebauter OpenSSH-Client (`C:\Windows\System32\OpenSSH\ssh.exe`); fehlt er: Einstellungen → System → Optionale Features → „OpenSSH-Client“ |
+| Datei-Browser | per SCP über die Verbindung des Terminals | per SFTP (eigene Verbindung, fragt Passwort/Passphrase selbst ab) |
+| RDP | „Windows App“ oder FreeRDP | Remotedesktopverbindung (`mstsc.exe`) |
+| Seriell | `/dev/cu.*` | COM-Ports, z. B. `COM3 115200` im Quick Connect |
+| Passwörter | verschlüsselt, Schlüssel im macOS-Schlüsselbund | verschlüsselt mit der Windows-Benutzeranmeldung (DPAPI) |
+| Menü | MacT-1000, Ablage, Bearbeiten, Makros, Ansicht, Fenster | Datei, Bearbeiten, Makros, Ansicht, Hilfe (Einstellungen unter Datei, Über/Updates unter Hilfe) |
+| Tastenkürzel | ⌘-Kombinationen | Strg+Umschalt bzw. Alt+Umschalt, damit Strg+Buchstabe für die Shell frei bleibt – siehe „Tastenkürzel“ |
+| Dateimanager | Finder | Explorer |
 
 ## Funktionen
 
@@ -111,6 +160,12 @@ Hinweise:
 - Abschalten: Einstellungen → „Bei neuen Versionen nachfragen … und installieren“ (dann erscheint statt der Frage nur der blaue Hinweis, geladen wird erst nach Klick auf **Jetzt aktualisieren**, beim Beenden wird nichts installiert).
 - Arbeitsordner und Protokoll: `~/Library/Application Support/MacT-1000/updates/` (`install.log`). Schlägt die Installation fehl, zeigt MacT-1000 beim nächsten Start die letzten Protokollzeilen.
 - Versionen vor 1.5.18 können sich nicht selbst aktualisieren – 1.5.18 einmal von Hand installieren.
+
+### Updates unter Windows
+
+- **Installierte Version (Setup):** wie unter macOS – Rückfrage, dann wird `MacT-1000-<Version>-setup.exe` aus dem Release geladen, Größe und SHA-256 geprüft und nach „Jetzt neu starten“ still installiert; anschließend startet MacT-1000 neu. Mit „Später“ wird beim nächsten Beenden installiert. Protokoll: `%APPDATA%\MacT-1000\updates\install.log`.
+- **Portable EXE:** nur Hinweis; „Herunterladen“ öffnet die Release-Seite, die neue `…-portable.exe` von Hand ersetzen.
+- Installationen der früheren WinT-1000 (bis 1.5.23) finden das Update auf MacT-1000 über ihr bisheriges Release-Verzeichnis, sofern es dort bereitgestellt ist (siehe „Releases auf GitHub“).
 
 ## Aufruf von außen (Automator, Terminal, Links)
 
@@ -207,6 +262,26 @@ Parameter wie bei der Kommandozeile ohne `--` (`run`, `macro`, `var`, `cwd`, `ti
 2. Befehl eintragen, z. B. `/Applications/MacT-1000.app/Contents/Resources/bin/mact1000 --local --run "uptime"` (oder kurz `mact1000 …`, wenn installiert).
 3. Soll das Fenster danach wieder zugehen: `--close` (nur das Pane) oder `--quit` (MacT-1000 ganz beenden) anhängen, für die Ausgabe zusätzlich `--log ~/Logs/name.log`.
 4. Ausführen. Fertige Vorlage: `beispiele/MacT-1000 Befehle ausführen.workflow` (außerdem eine `.command`-Datei für den Finder und ein AppleScript).
+
+### Unter Windows
+
+Alle Optionen gelten genauso. Statt `mact1000` wird die EXE aufgerufen; das Fenster „Aufruf von außen“ (Menü Hilfe) zeigt fertige Befehle mit dem Pfad der laufenden EXE. Beispiele für die installierte Version:
+
+```bat
+set M="%LOCALAPPDATA%\Programs\MacT-1000\MacT-1000.exe"
+%M% --local --run "ipconfig"
+%M% --ssh admin@10.0.0.1 --run "show version" --split right
+%M% --serial COM3:115200
+%M% --folder Rechenzentrum --multi
+%M% --ssh admin@10.0.0.1 --run "show running-config" --log "%USERPROFILE%\Logs\core-sw01.log" --close 3
+%M% --ssh admin@10.0.0.2 --layout core --slot unten
+%M% --local --run "ipconfig /all" --quit
+```
+
+- `--log DATEI`: vollständiger Pfad nötig, z. B. `C:\Logs\sw.log`, `\\server\freigabe\sw.log` oder `~\Logs\sw.log` (`~` = Benutzerordner).
+- `--close` und `--log` sind bei RDP nicht möglich (eigenes Programm).
+- Links: `mact1000://ssh/admin@10.0.0.1?run=show%20version&close=3`; frühere `wint1000://`-Links funktionieren weiter.
+- Vorlagen im Ordner `beispiele`: `MacT-1000-Beispiel.cmd` (Batch) und `MacT-1000-Beispiel.ps1` (PowerShell). Für Verknüpfungen: Rechtsklick auf den Desktop → Neu → Verknüpfung → einen der Befehle als Ziel. Für zeitgesteuerte Abläufe die Aufgabenplanung mit demselben Befehl verwenden.
 
 ### Sicherheit
 
@@ -315,37 +390,47 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 
 ## Tastenkürzel
 
-| Kürzel | Aktion |
-|---|---|
-| ⌘T | Neuer Tab mit lokaler Shell |
-| ⌘N | Neue Session |
-| ⌘K | Quick Connect |
-| ⌘D | Vertikal teilen (nebeneinander) |
-| ⇧⌘D | Horizontal teilen (untereinander) |
-| ⌥⌘D | Session in neuem Pane duplizieren |
-| ⌘R | Getrennte Verbindung neu verbinden – ist sie noch aktiv, wird sie in einem neuen Tab direkt daneben dupliziert |
-| ⌥⇧⌘D | Tab duplizieren (gleiche Aufteilung, alle Sessions neu verbunden) |
-| ⌘] / ⌘[ | Nächstes / vorheriges Pane im aktuellen Tab |
-| ⌘→ / ⌘← | Nächstes / vorheriges Pane über alle Tabs hinweg (nach dem letzten Pane eines Tabs geht es im nächsten Tab weiter) |
-| ⇧⌘] / ⇧⌘[ | Nächster / vorheriger Tab, ⌘1–9 direkt |
-| ⇧⌘↩ | Pane maximieren |
-| ⌥⌘= | Panes gleichmäßig verteilen |
-| ⇧⌘I | Multi-Input ein/aus |
-| ⇧⌘A | Alle Panes des Tabs für Multi-Input wählen |
-| ⇧⌘V | Multi-Paste |
-| ⇧⌘M | Makro ausführen |
-| ⇧⌘R | Makro-Aufzeichnung starten / stoppen |
-| ⌘. | Laufende Makros stoppen |
-| ⌘F | Suchen |
-| ⌘L | Terminal leeren |
-| ⌘W / ⇧⌘W | Pane / Tab schließen |
-| ⌘B | Seitenleiste ein/aus |
-| ⇧⌘F | Datei-Browser (SCP) für das aktive SSH-Pane |
-| ⌥⌘T | Server anzeigen (TFTP, FTP, HTTP, SFTP/SCP) |
-| ⌘+ / ⌘- / ⌘0 | Schriftgröße |
-| ⌥← / ⌥→ | Wort zurück/vor (Zeilenanfang/-ende: fn← / fn→ oder Ctrl+A / Ctrl+E) |
+Unter Windows bleibt Strg+Buchstabe für die Shell frei (Strg+C, Strg+D, Strg+R …); Programmfunktionen liegen auf Strg+Umschalt bzw. Alt+Umschalt. Strg+C kopiert, wenn Text markiert ist, Strg+V fügt ein. Tooltips und Menüs zeigen jeweils das Kürzel des laufenden Systems.
 
-Beendete Sessions lassen sich mit ⌘R neu verbinden (Enter löst bewusst nichts aus, damit kein versehentlicher Neuaufbau passiert). Ist die Verbindung im aktiven Pane noch aktiv, öffnet ⌘R dieselbe Verbindung zusätzlich in einem neuen Tab direkt rechts daneben (lokale Shells im aktuellen Verzeichnis); als geteiltes Pane geht das mit ⌥⌘D.
+| Funktion | Mac | Windows |
+|---|---|---|
+| Neuer Tab mit lokaler Shell | ⌘T | Strg+Umschalt+T |
+| Neue Session | ⌘N | Strg+Umschalt+S |
+| Quick Connect | ⌘K | Strg+Umschalt+K |
+| Vertikal teilen (nebeneinander) | ⌘D | Strg+Umschalt+E |
+| Horizontal teilen (untereinander) | ⇧⌘D | Strg+Umschalt+O |
+| Session in neuem Pane duplizieren | ⌥⌘D | Alt+Umschalt+D |
+| Getrennte Verbindung neu verbinden – ist sie noch aktiv, wird sie in einem neuen Tab direkt daneben dupliziert | ⌘R | Strg+Umschalt+R |
+| Tab duplizieren (gleiche Aufteilung, alle Sessions neu verbunden) | ⌥⇧⌘D | Alt+Umschalt+T |
+| Nächstes / vorheriges Pane im aktuellen Tab | ⌘] / ⌘[ | Strg+Umschalt+N / Strg+Umschalt+P |
+| Nächstes / vorheriges Pane über alle Tabs hinweg (nach dem letzten Pane eines Tabs geht es im nächsten Tab weiter) | ⌘→ / ⌘← | Alt+Umschalt+→ / Alt+Umschalt+← |
+| Nächster / vorheriger Tab | ⇧⌘] / ⇧⌘[ | Strg+Bild↓ / Strg+Bild↑ (auch Strg+Tab / Strg+Umschalt+Tab) |
+| Tab 1–9 direkt | ⌘1–9 | Alt+1–9 |
+| Pane maximieren | ⇧⌘↩ | Strg+Umschalt+X |
+| Panes gleichmäßig verteilen | ⌥⌘= | Strg+Umschalt+G |
+| Multi-Input ein/aus | ⇧⌘I | Strg+Umschalt+I |
+| Alle Panes des Tabs für Multi-Input wählen | ⇧⌘A | Alt+Umschalt+A |
+| Multi-Paste | ⇧⌘V | Strg+Umschalt+M |
+| Makro ausführen | ⇧⌘M | Alt+Umschalt+M |
+| Makro-Aufzeichnung starten / stoppen | ⇧⌘R | Alt+Umschalt+R |
+| Laufende Makros stoppen | ⌘. | Strg+. |
+| Kopieren / Einfügen | ⌘C / ⌘V | Strg+Umschalt+C / Strg+Umschalt+V |
+| Alles markieren | ⌘A | Strg+Umschalt+A |
+| Suchen | ⌘F | Strg+Umschalt+F |
+| Terminal leeren | ⌘L | Strg+Umschalt+L |
+| Pane / Tab schließen | ⌘W / ⇧⌘W | Strg+Umschalt+W / Strg+Umschalt+Q |
+| Seitenleiste ein/aus | ⌘B | Strg+Umschalt+B |
+| Datei-Browser (SCP bzw. SFTP) für das aktive SSH-Pane | ⇧⌘F | Strg+Umschalt+D |
+| Server anzeigen (TFTP, FTP, HTTP, SFTP/SCP) | ⌥⌘T | Alt+Umschalt+S |
+| Einstellungen | ⌘, | Strg+, |
+| Gesamte Konfiguration exportieren | ⇧⌘E | – (Menü Datei) |
+| Schriftgröße größer / kleiner / Standard | ⌘+ / ⌘- / ⌘0 | Strg++ / Strg+- / Strg+0 |
+| Dialog bestätigen | ⌘↩ | Strg+Enter |
+| Wort zurück / vor | ⌥← / ⌥→ | Strg+← / Strg+→ (je nach Shell) |
+| Zeilenanfang / -ende | fn← / fn→ oder Ctrl+A / Ctrl+E | Pos1 / Ende oder Strg+A / Strg+E |
+| Vollbild / Entwicklerwerkzeuge | ⌃⌘F / ⌥⌘I | F11 / F12 |
+
+Beendete Sessions lassen sich mit ⌘R bzw. Strg+Umschalt+R neu verbinden (Enter löst bewusst nichts aus, damit kein versehentlicher Neuaufbau passiert). Ist die Verbindung im aktiven Pane noch aktiv, öffnet dasselbe Kürzel die Verbindung zusätzlich in einem neuen Tab direkt rechts daneben (lokale Shells im aktuellen Verzeichnis); als geteiltes Pane geht das mit ⌥⌘D bzw. Alt+Umschalt+D.
 
 ### Ordner in der Session-Liste
 
@@ -357,21 +442,22 @@ Beendete Sessions lassen sich mit ⌘R neu verbinden (Enter löst bewusst nichts
 - Sessions aus der Liste auf ein Pane zu ziehen öffnet sie wie bisher.
 - Leere Ordner werden in den Einstellungen gespeichert und beim Konfigurations-Export mitgenommen.
 
-Rückfrage beim Schließen: Solange SSH-, Telnet- oder serielle Verbindungen aktiv sind, fragt MacT-1000 vor dem Schließen eines Panes, eines Tabs, des Fensters und vor dem Beenden (⌘Q) nach, ob wirklich beendet werden soll. Lokale Shells und RDP (externes Programm) lösen keine Rückfrage aus. Die Rückfrage lässt sich mit **Enter** bestätigen (Verbindung wird getrennt und geschlossen) oder mit Esc abbrechen – auch beim Schließen des Fensters und beim Beenden. Abschaltbar unter Einstellungen → „Vor dem Schließen … bei aktiven Verbindungen nachfragen“.
+Rückfrage beim Schließen: Solange SSH-, Telnet- oder serielle Verbindungen aktiv sind, fragt MacT-1000 vor dem Schließen eines Panes, eines Tabs, des Fensters und vor dem Beenden (⌘Q bzw. Datei → Beenden) nach, ob wirklich beendet werden soll. Lokale Shells und RDP (externes Programm) lösen keine Rückfrage aus. Die Rückfrage lässt sich mit **Enter** bestätigen (Verbindung wird getrennt und geschlossen) oder mit Esc abbrechen – auch beim Schließen des Fensters und beim Beenden. Abschaltbar unter Einstellungen → „Vor dem Schließen … bei aktiven Verbindungen nachfragen“.
 
 ## Selbst bauen
 
-Voraussetzung: Node.js 20+ (`brew install node`). Xcode ist nicht nötig – node-pty und serialport bringen fertige macOS-Binaries mit.
+Voraussetzung: Node.js 20+ (macOS: `brew install node`). Xcode bzw. Visual Studio sind nicht nötig – node-pty und serialport bringen fertige Binaries für macOS und Windows mit.
 
 ```bash
 npm install
 npm start                 # Entwicklungsmodus
-npm run dist:arm64        # App für Apple Silicon -> dist/
-npm run dist:x64          # App für Intel
-npm run dist:universal    # Universal-Binary
+npm run dist:mac          # ZIPs für Apple Silicon und Intel -> dist/
+npm run dist:win          # Windows: Installer und portable EXE -> dist/
+npm run dist:setup        # nur Windows-Installer
+npm run dist:portable     # nur portable EXE
 ```
 
-Für eine eigene Signatur mit Apple-Developer-ID in `package.json` unter `build.mac.identity` den Zertifikatsnamen eintragen (statt `null`).
+Die Windows-Pakete lassen sich auch unter macOS oder Linux bauen. Für eine eigene Signatur mit Apple-Developer-ID in `package.json` unter `build.mac.identity` den Zertifikatsnamen eintragen (statt `null`).
 
 ## Aufbau
 
@@ -381,9 +467,9 @@ src/sessions.js   Session-Manager, PTY für lokale Shell / ssh / Befehle
 src/scp.js        SCP-Dateiübertragung, Verzeichnisliste, gemeinsame SSH-Verbindung
 src/ssh-args.js   Argument-Hilfsfunktionen
 src/telnet.js     Telnet-Client (RFC 854, NAWS, TTYPE)
-src/serial.js     Serielle Konsole (serialport)
+src/serial.js     Serielle Konsole (serialport, /dev/cu.* bzw. COM-Ports)
 src/config-io.js  Export/Import der Konfiguration (inkl. Passwort-Verschlüsselung)
-src/rdp.js        RDP-Start über Windows App oder FreeRDP
+src/rdp.js        RDP-Start über Windows App oder FreeRDP (macOS) bzw. mstsc.exe (Windows)
 src/store.js      Sessions/Einstellungen (verschlüsselte Passwörter), lokal oder Netzlaufwerk
 src/shared.js     Gemeinsame Konfiguration: Sperre, Überwachung, Offline-Abgleich
 src/merge3.js     3-Wege-Zusammenführung gleichzeitiger Änderungen
@@ -394,19 +480,49 @@ src/http-server.js HTTP-Server (Verzeichnisliste, Range, PUT/POST/DELETE, Basic-
 src/ssh-server.js SFTP-/SCP-Server (Bibliothek ssh2)
 src/version.js    Versionsvergleich für die Konfigurationsversion
 src/update.js     Abfrage des neuesten Releases auf GitHub (Update-Hinweis)
-src/updater.js    Automatisches Update: Download, SHA-256-Prüfung, Entpacken, Austausch nach dem Beenden
+src/updater.js    Automatisches Update: wählt die Variante für macOS bzw. Windows
+src/updater-mac.js Update unter macOS: Download, SHA-256-Prüfung, Entpacken, Austausch nach dem Beenden
+src/updater-win.js Update unter Windows: Installer laden, SHA-256-Prüfung, stille Installation nach dem Beenden
+src/sftp.js       SFTP-Datei-Browser (Windows)
+src/compat.js     Kennungen früherer Versionen (Datenübernahme, frühere Links und Formate)
 src/launch.js     Aufrufe von außen: Kommandozeile und mact1000://-Links auswerten
-build/bin/mact1000 Kommandozeilen-Werkzeug (in der App unter Contents/Resources/bin)
-beispiele/        Automator-Ablauf, .command-Datei und AppleScript als Vorlagen
+build/bin/mact1000 Kommandozeilen-Werkzeug (in der Mac-App unter Contents/Resources/bin)
+build/installer.nsh Ergänzungen für den Windows-Installer (Links, Ablösung von WinT-1000)
+beispiele/        Vorlagen: Automator-Ablauf, .command-Datei, AppleScript (macOS), Batch und PowerShell (Windows)
+renderer/i18n.js  Sprachumschaltung Deutsch/Englisch; renderer/i18n-en.js enthält die englischen Texte
 renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Server-Tab, Makros und Makro-Schleifen, Aufrufe von außen (xterm.js)
 test/             Unit-, Telnet-, SCP-, Server- und End-to-End-Tests
 ```
 
-Daten liegen unter `~/Library/Application Support/MacT-1000/`.
+Daten liegen unter `~/Library/Application Support/MacT-1000/` (macOS) bzw. `%APPDATA%\MacT-1000` (Windows).
+
+### Umstieg von WinT-1000 (Windows, bis 1.5.23)
+
+- **Daten:** Beim ersten Start übernimmt MacT-1000 einmalig Sessions, Ordner, Makros, Einstellungen, Server-Einstellungen und gespeicherte Passwörter aus `%APPDATA%\WinT-1000`. Gibt es in `%APPDATA%\MacT-1000` schon Daten, werden diese vorher nach `%APPDATA%\MacT-1000\Sicherung-vor-1.6.0` gesichert. Der alte Ordner bleibt unverändert.
+- **Installer:** Die Setup-Variante entfernt eine installierte WinT-1000 (Programmdateien und Verknüpfungen, nicht die Daten) und richtet `mact1000://` und `wint1000://` ein.
+- **Links und Skripte:** `wint1000://`-Links funktionieren weiter. In Batch-/PowerShell-Skripten den Pfad der EXE anpassen (`…\Programs\MacT-1000\MacT-1000.exe`).
+- **Gemeinsame Netzwerk-Konfiguration:** Ein Netzwerkordner, den WinT-1000 angelegt hat (`WinT-1000-config.json`), wird weiter gelesen und mitgepflegt; Macs und PCs teilen damit denselben Stand.
+- **Exporte** aus WinT-1000 lassen sich importieren.
 
 ### Umstieg von MacTerm (bis 1.4.0)
 
 Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordner und Layout aus `~/Library/Application Support/MacTerm/`. Ausnahme: **in der App gespeicherte Passwörter** – sie sind mit einem Schlüssel verschlüsselt, der an den App-Namen gebunden ist, und müssen einmalig neu eingegeben werden. Alternativ in MacTerm „Konfiguration exportieren“ mit Passwörtern wählen und in MacT-1000 importieren. SSH-Schlüssel-Passphrasen im macOS-Schlüsselbund sind nicht betroffen. Die alte `MacTerm.app` kann danach gelöscht werden.
+
+## Releases auf GitHub
+
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.6.0`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+
+| Datei | Wofür |
+|---|---|
+| `MacT-1000-<Version>-arm64-mac.zip` | Apple Silicon – wird vom automatischen Update geladen |
+| `MacT-1000-<Version>-x64-mac.zip` | Intel-Macs – wird vom automatischen Update geladen |
+| `MacT-1000-<Version>-setup.exe` | Windows-Installer – wird von der installierten Windows-Version geladen und still installiert |
+| `MacT-1000-<Version>-portable.exe` | Windows portable (manuell) |
+
+## Hinweise
+
+- Getestet wurde nur in einer Linux-Testumgebung (Oberfläche im macOS- und im Windows-Modus, Abläufe, Update-Logik mit Testserver). Ein Test auf einem echten Mac und einem echten Windows-Rechner steht aus – auch für Installer, Datenübernahme und automatisches Update.
+- Die Firewall (macOS bzw. Windows) fragt beim ersten Start eines Servers (TFTP/FTP/HTTP/SFTP) ggf., ob eingehende Verbindungen erlaubt werden.
 
 ## Lizenz
 
