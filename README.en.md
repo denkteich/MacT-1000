@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.6.0 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.6.0 · Copyright © 2026 Harald (Mac)Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP/SFTP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
