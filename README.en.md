@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.0 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.1 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.0-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.1-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.1-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.0-setup.exe` | `MacT-1000-1.8.0-portable.exe` |
+| File | `MacT-1000-1.8.1-setup.exe` | `MacT-1000-1.8.1-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -315,6 +315,54 @@ set M="%LOCALAPPDATA%\Programs\MacT-1000\MacT-1000.exe"
 - Unknown sessions, macros, options or invalid targets: nothing is opened, an error message appears instead.
 - Turn off: Settings → "Allow external calls …".
 
+### Sharing directly (--share, from 1.8.1)
+
+With `--share` the called pane is shared right after connecting (see [Sharing panes](#sharing-panes-from-180)) – e.g. from an Automator workflow or a script that then passes the connection data on to a colleague.
+
+```
+mact1000 --ssh admin@10.0.0.2 --share
+mact1000 --session "Labor/Core-Switch" --share --share-mode ask --share-expires 60 --share-info ~/share.json
+mact1000://ssh/admin@10.0.0.2?share=1&share-mode=ask
+"C:\Program Files\MacT-1000\MacT-1000.exe" --ssh admin@10.0.0.2 --share --share-info %USERPROFILE%\share.json
+```
+
+| Option | Meaning |
+|---|---|
+| `--share` | Share the pane after connecting. Applies to the target before it (like `--run`); `--share no` turns it off again |
+| `--share-mode MODE` | `ro` = read only (default), `ask` = write after confirmation, `rw` = read and write without asking |
+| `--share-password PW` | Password of the share (4–128 characters). If omitted, a random one is generated and copied to the clipboard |
+| `--share-name NAME` | Name the viewer sees. Default: title of the pane |
+| `--share-expires MINUTES` | The share ends after this many minutes (at most 10080 = 7 days); `0` = until stopped (default) |
+| `--share-info FILE` | Write the connection data as JSON to this file (full path, `~` allowed, folders are created, readable only by your own user) |
+
+Every `--share-*` option turns on `--share` as well. Possible for local shell, SSH, Telnet, serial, command and saved sessions of these types – not for RDP and not for whole folders (`--folder`).
+
+Content of the info file:
+
+```json
+{
+  "name": "Core-Switch",
+  "mode": "ask",
+  "password": "k7Qm2xRpZa",
+  "host": "macbook-harald",
+  "addresses": ["192.168.1.20"],
+  "port": 7022,
+  "fingerprint": "SHA256:…",
+  "connect": "share 192.168.1.20",
+  "expires": "2026-11-21T12:00:00.000Z",
+  "created": "2026-11-21T11:00:00.000Z"
+}
+```
+
+The viewer can type `connect` directly into Quick Connect; compare the fingerprint when connecting for the first time.
+
+Security:
+
+- **"Allow sharing"** (Settings → "Sharing") must be turned on beforehand. An external call never turns it on by itself; otherwise an error appears and nothing is opened.
+- A call with `--share` is always confirmed, with the note "Will be shared (access, validity)". With "Run exactly this call without asking in future" it becomes trusted; the share options are part of the trusted call, so a changed mode asks again.
+- **Local shell with write access** (`ask` or `rw`): MacT-1000 always asks additionally, even for trusted calls – otherwise viewers work with your permissions on your computer.
+- Better not to put `share-password` into links (`mact1000://…`): links easily end up in histories and chats. The generated password is in the clipboard or in the info file.
+
 ## Servers (TFTP, FTP, HTTP, SFTP/SCP)
 
 Sidebar tab **Servers** (or ⌥⌘T / Alt+Shift+S, menu **View → Show servers**). Every server has its own card – clicking the header expands the settings, **Start**/**Stop** in the header starts or stops it directly. The servers only run while started and are stopped when MacT-1000 quits. At the bottom of the session list "Servers: FTP, SFTP/SCP" shows which are currently running.
@@ -361,6 +409,8 @@ Note: the browser lists directories via `ls` in a POSIX shell on the server. On 
 ## Sharing panes (from 1.8.0)
 
 A running pane (local shell, SSH, Telnet, serial, command) can be shared with other computers that also run MacT-1000 – for working together, support or training. The viewer sees the pane live and, with permission, can type as well. Mac and Windows can connect to each other.
+
+Also from an external call: `mact1000 --ssh admin@10.0.0.2 --share` (see [Sharing directly](#sharing-directly---share-from-181)).
 
 **Sharing:** pane menu (`⋯` at the top right of the pane) → **"Share session…"**. In the dialog:
 
@@ -571,7 +621,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.0`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.1`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|

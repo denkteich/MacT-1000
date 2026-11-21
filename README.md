@@ -2,7 +2,7 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.8.0 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.1 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
 Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.8.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.0-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.1-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.1-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.8.0-setup.exe` | `MacT-1000-1.8.0-portable.exe` |
+| Datei | `MacT-1000-1.8.1-setup.exe` | `MacT-1000-1.8.1-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -315,6 +315,54 @@ set M="%LOCALAPPDATA%\Programs\MacT-1000\MacT-1000.exe"
 - Unbekannte Sessions, Makros, Optionen oder ungültige Ziele: Es wird nichts geöffnet, stattdessen erscheint eine Fehlermeldung.
 - Abschalten: Einstellungen → „Aufrufe von außen erlauben …“.
 
+### Direkt freigeben (--share, ab 1.8.1)
+
+Mit `--share` wird das aufgerufene Pane gleich nach dem Verbinden freigegeben (siehe [Pane-Freigabe](#pane-freigabe-ab-180)) – z. B. aus einem Automator-Ablauf oder Skript, das danach die Verbindungsdaten an den Kollegen weitergibt.
+
+```
+mact1000 --ssh admin@10.0.0.2 --share
+mact1000 --session "Labor/Core-Switch" --share --share-mode ask --share-expires 60 --share-info ~/freigabe.json
+mact1000://ssh/admin@10.0.0.2?share=1&share-mode=ask
+"C:\Program Files\MacT-1000\MacT-1000.exe" --ssh admin@10.0.0.2 --share --share-info %USERPROFILE%\freigabe.json
+```
+
+| Option | Bedeutung |
+|---|---|
+| `--share` | Pane nach dem Verbinden freigeben. Gilt für das Ziel davor (wie `--run`); `--share nein` schaltet es wieder ab |
+| `--share-mode MODUS` | `ro` = nur lesen (Standard), `ask` = Schreiben nach Bestätigung, `rw` = Lesen und Schreiben ohne Rückfrage (auch `lesen`, `fragen`, `schreiben`) |
+| `--share-password PW` | Passwort der Freigabe (4–128 Zeichen). Ohne Angabe wird es zufällig erzeugt und in die Zwischenablage kopiert |
+| `--share-name NAME` | Name, den der Zuschauer sieht. Ohne Angabe: Titel des Panes |
+| `--share-expires MINUTEN` | Freigabe endet nach so vielen Minuten (höchstens 10080 = 7 Tage); `0` = bis zum Beenden (Standard) |
+| `--share-info DATEI` | Verbindungsdaten als JSON in diese Datei schreiben (vollständiger Pfad, `~` erlaubt, Ordner werden angelegt, nur für den eigenen Benutzer lesbar) |
+
+Jede `--share-*`-Option schaltet `--share` mit ein. Möglich bei lokaler Shell, SSH, Telnet, Seriell, Befehl und gespeicherten Sessions dieser Typen – nicht bei RDP und nicht für ganze Ordner (`--folder`).
+
+Inhalt der Info-Datei:
+
+```json
+{
+  "name": "Core-Switch",
+  "mode": "ask",
+  "password": "k7Qm2xRpZa",
+  "host": "macbook-harald",
+  "addresses": ["192.168.1.20"],
+  "port": 7022,
+  "fingerprint": "SHA256:…",
+  "connect": "share 192.168.1.20",
+  "expires": "2026-11-21T12:00:00.000Z",
+  "created": "2026-11-21T11:00:00.000Z"
+}
+```
+
+`connect` kann der Zuschauer direkt in Quick Connect eingeben; den Fingerprint beim ersten Verbinden damit vergleichen.
+
+Sicherheit:
+
+- **„Freigaben erlauben“** (Einstellungen → „Freigaben“) muss vorher eingeschaltet sein. Ein Aufruf von außen schaltet es nie selbst ein; sonst erscheint ein Fehler und es wird nichts geöffnet.
+- Ein Aufruf mit `--share` wird immer bestätigt, mit dem Hinweis „Wird freigegeben (Zugriff, Gültigkeit)“. Mit „Genau diesen Aufruf künftig ohne Rückfrage ausführen“ wird er vertraut; die Freigabe-Optionen gehören zum vertrauten Aufruf, ein geänderter Modus fragt also wieder nach.
+- **Lokale Shell mit Schreibrecht** (`ask` oder `rw`): Hier fragt MacT-1000 immer zusätzlich nach, auch bei vertrauten Aufrufen – Zuschauer arbeiten sonst mit deinen Rechten auf deinem Rechner.
+- Bei Links (`mact1000://…`) besser kein `share-password` angeben: Links landen leicht in Verläufen und Chats. Das automatisch erzeugte Passwort steht in der Zwischenablage bzw. in der Info-Datei.
+
 ## Server (TFTP, FTP, HTTP, SFTP/SCP)
 
 Seitenleisten-Tab **Server** (oder ⌥⌘T, Menü **Ansicht → Server anzeigen**). Jeder Server hat eine eigene Karte – Klick auf die Kopfzeile klappt die Einstellungen auf, **Start**/**Stopp** in der Kopfzeile startet oder stoppt ihn direkt. Die Server laufen nur, solange sie gestartet sind, und werden beim Beenden von MacT-1000 gestoppt. Unten in der Session-Liste zeigt „Server: FTP, SFTP/SCP“ an, welche gerade laufen.
@@ -361,6 +409,8 @@ Hinweis: Der Browser listet Verzeichnisse per `ls` in einer POSIX-Shell auf dem 
 ## Pane-Freigabe (ab 1.8.0)
 
 Ein laufendes Pane (lokale Shell, SSH, Telnet, Seriell, Befehl) lässt sich für andere Rechner freigeben, auf denen ebenfalls MacT-1000 läuft – zum gemeinsamen Arbeiten, für Support oder Schulungen. Der Zuschauer sieht das Pane live und kann mit Erlaubnis auch mittippen. Mac und Windows können sich gegenseitig verbinden.
+
+Auch aus einem Aufruf von außen: `mact1000 --ssh admin@10.0.0.2 --share` (siehe [Direkt freigeben](#direkt-freigeben---share-ab-181)).
 
 **Freigeben:** Pane-Menü (`⋯` oben rechts im Pane) → **„Session freigeben…“**. Im Dialog:
 
@@ -571,7 +621,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.0`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.1`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|
