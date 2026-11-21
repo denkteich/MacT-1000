@@ -2,7 +2,7 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.8.1 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.2 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
 Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.8.1-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.1-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.2-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.2-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.8.1-setup.exe` | `MacT-1000-1.8.1-portable.exe` |
+| Datei | `MacT-1000-1.8.2-setup.exe` | `MacT-1000-1.8.2-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -334,6 +334,7 @@ mact1000://ssh/admin@10.0.0.2?share=1&share-mode=ask
 | `--share-name NAME` | Name, den der Zuschauer sieht. Ohne Angabe: Titel des Panes |
 | `--share-expires MINUTEN` | Freigabe endet nach so vielen Minuten (höchstens 10080 = 7 Tage); `0` = bis zum Beenden (Standard) |
 | `--share-info DATEI` | Verbindungsdaten als JSON in diese Datei schreiben (vollständiger Pfad, `~` erlaubt, Ordner werden angelegt, nur für den eigenen Benutzer lesbar) |
+| `--share-confirm nein` | Ohne Rückfrage freigeben, auch mit Schreibrecht und für die lokale Shell (ab 1.8.2, siehe unten). Nur über die Kommandozeile und nur, wenn die Einstellung dafür eingeschaltet ist |
 
 Jede `--share-*`-Option schaltet `--share` mit ein. Möglich bei lokaler Shell, SSH, Telnet, Seriell, Befehl und gespeicherten Sessions dieser Typen – nicht bei RDP und nicht für ganze Ordner (`--folder`).
 
@@ -361,6 +362,14 @@ Sicherheit:
 - **„Freigaben erlauben“** (Einstellungen → „Freigaben“) muss vorher eingeschaltet sein. Ein Aufruf von außen schaltet es nie selbst ein; sonst erscheint ein Fehler und es wird nichts geöffnet.
 - Ein Aufruf mit `--share` wird immer bestätigt, mit dem Hinweis „Wird freigegeben (Zugriff, Gültigkeit)“. Mit „Genau diesen Aufruf künftig ohne Rückfrage ausführen“ wird er vertraut; die Freigabe-Optionen gehören zum vertrauten Aufruf, ein geänderter Modus fragt also wieder nach.
 - **Lokale Shell mit Schreibrecht** (`ask` oder `rw`): Hier fragt MacT-1000 immer zusätzlich nach, auch bei vertrauten Aufrufen – Zuschauer arbeiten sonst mit deinen Rechten auf deinem Rechner.
+- **Ohne Rückfrage (ab 1.8.2):** In den Einstellungen → „Freigaben“ das Häkchen **„Aufrufe von außen dürfen ohne Rückfrage freigeben“** setzen (Standard: aus, gilt nur für diesen Rechner und wird nicht über die Netzwerk-Konfiguration verteilt). Dann gibt `--share-confirm nein` ohne jede Rückfrage frei – auch `--share-mode rw` bei einer lokalen Shell:
+
+  ```
+  mact1000 --local --share --share-mode rw --share-confirm nein --share-info ~/freigabe.json
+  "C:\Program Files\MacT-1000\MacT-1000.exe" --ssh admin@10.0.0.2 --share-mode rw --share-confirm nein
+  ```
+
+  Ohne die Einstellung erscheint ein Fehler und es wird nichts geöffnet. In Links (`mact1000://…?share-confirm=nein`) ist die Option nie erlaubt, weil jede Webseite einen Link auslösen kann. Enthält der Aufruf zusätzlich Befehle (`--run`) oder ein Makro, kommt für diese weiterhin die normale Rückfrage (es sei denn, der Aufruf ist vertraut); nur die Fragen zur Freigabe entfallen. Im Pane erscheint die Zeile „Ohne Rückfrage freigegeben (Aufruf von außen)“, der türkisfarbene Rahmen zeigt die Freigabe wie gewohnt. Nur einschalten, wenn ausschließlich eigene Skripte MacT-1000 aufrufen.
 - Bei Links (`mact1000://…`) besser kein `share-password` angeben: Links landen leicht in Verläufen und Chats. Das automatisch erzeugte Passwort steht in der Zwischenablage bzw. in der Info-Datei.
 
 ## Server (TFTP, FTP, HTTP, SFTP/SCP)
@@ -621,7 +630,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.1`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.2`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|

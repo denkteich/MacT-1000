@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.1 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.2 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.1-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.1-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.2-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.2-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.1-setup.exe` | `MacT-1000-1.8.1-portable.exe` |
+| File | `MacT-1000-1.8.2-setup.exe` | `MacT-1000-1.8.2-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -334,6 +334,7 @@ mact1000://ssh/admin@10.0.0.2?share=1&share-mode=ask
 | `--share-name NAME` | Name the viewer sees. Default: title of the pane |
 | `--share-expires MINUTES` | The share ends after this many minutes (at most 10080 = 7 days); `0` = until stopped (default) |
 | `--share-info FILE` | Write the connection data as JSON to this file (full path, `~` allowed, folders are created, readable only by your own user) |
+| `--share-confirm no` | Share without asking, also with write access and for the local shell (from 1.8.2, see below). Command line only, and only if the setting for it is turned on |
 
 Every `--share-*` option turns on `--share` as well. Possible for local shell, SSH, Telnet, serial, command and saved sessions of these types – not for RDP and not for whole folders (`--folder`).
 
@@ -361,6 +362,14 @@ Security:
 - **"Allow sharing"** (Settings → "Sharing") must be turned on beforehand. An external call never turns it on by itself; otherwise an error appears and nothing is opened.
 - A call with `--share` is always confirmed, with the note "Will be shared (access, validity)". With "Run exactly this call without asking in future" it becomes trusted; the share options are part of the trusted call, so a changed mode asks again.
 - **Local shell with write access** (`ask` or `rw`): MacT-1000 always asks additionally, even for trusted calls – otherwise viewers work with your permissions on your computer.
+- **Without asking (from 1.8.2):** In Settings → "Sharing" tick **"External calls may share without asking"** (default: off; applies to this computer only and is not distributed via the network configuration). Then `--share-confirm no` shares without any confirmation – also `--share-mode rw` for a local shell:
+
+  ```
+  mact1000 --local --share --share-mode rw --share-confirm no --share-info ~/share.json
+  "C:\Program Files\MacT-1000\MacT-1000.exe" --ssh admin@10.0.0.2 --share-mode rw --share-confirm no
+  ```
+
+  Without the setting an error appears and nothing is opened. In links (`mact1000://…?share-confirm=no`) the option is never allowed, because any web page can trigger a link. If the call also contains commands (`--run`) or a macro, the normal confirmation still appears for them (unless the call is trusted); only the questions about sharing are skipped. The pane shows the line "Shared without asking (external call)", and the turquoise frame shows the share as usual. Only turn this on if nothing but your own scripts call MacT-1000.
 - Better not to put `share-password` into links (`mact1000://…`): links easily end up in histories and chats. The generated password is in the clipboard or in the info file.
 
 ## Servers (TFTP, FTP, HTTP, SFTP/SCP)
@@ -621,7 +630,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.1`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.2`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|
