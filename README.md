@@ -2,9 +2,9 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.6.0 · Copyright © 2026 Harald (Mac)Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.0 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
-Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-/SFTP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
+Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
 Projekt und Updates: [github.com/denkteich/MacT-1000](https://github.com/denkteich/MacT-1000)
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.6.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.6.0-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.0-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.6.0-setup.exe` | `MacT-1000-1.6.0-portable.exe` |
+| Datei | `MacT-1000-1.8.0-setup.exe` | `MacT-1000-1.8.0-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -61,7 +61,7 @@ Funktionen und Oberfläche sind dieselben wie unter macOS. Unterschiede:
 |---|---|---|
 | Lokale Shell | Login-Shell (`$SHELL`, z. B. zsh) | PowerShell 7 (`pwsh`), sonst Windows PowerShell, sonst `cmd.exe`; eigene Shell in den Einstellungen |
 | SSH | System-`ssh` | eingebauter OpenSSH-Client (`C:\Windows\System32\OpenSSH\ssh.exe`); fehlt er: Einstellungen → System → Optionale Features → „OpenSSH-Client“ |
-| Datei-Browser | per SCP über die Verbindung des Terminals | per SFTP (eigene Verbindung, fragt Passwort/Passphrase selbst ab) |
+| Datei-Browser | per SCP über die Verbindung des Terminals | per SCP (eigene Verbindung, fragt Passwort/Passphrase selbst ab; ab 1.7.0, vorher SFTP) |
 | RDP | „Windows App“ oder FreeRDP | Remotedesktopverbindung (`mstsc.exe`) |
 | Seriell | `/dev/cu.*` | COM-Ports, z. B. `COM3 115200` im Quick Connect |
 | Passwörter | verschlüsselt, Schlüssel im macOS-Schlüsselbund | verschlüsselt mit der Windows-Benutzeranmeldung (DPAPI) |
@@ -87,7 +87,8 @@ Funktionen und Oberfläche sind dieselben wie unter macOS. Unterschiede:
 | Multi-Input | Tastatureingaben gehen gleichzeitig an alle markierten Panes – über Tabs hinweg. Pro Pane über das ⇶-Symbol ein-/ausschließbar. Markierte Panes sind orange umrandet |
 | Makros | Abläufe „warte auf Ausgabe → sende Eingabe“, manuell erstellen oder aufzeichnen, Variablen mit Abfrage beim Start, Schleifen über Zahlen (1,2,3 7-10) oder Texte, Autostart nach dem Verbinden, Ausführung auf mehreren Panes; Auto-Antworten auf bestimmte Ausgaben (siehe unten) |
 | Multi-Paste | Text/Befehle an ausgewählte Panes senden: als Block (Bracketed Paste) oder zeilenweise mit Verzögerung, Platzhalter `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, Verlauf der letzten 20 Einträge |
-| Session-Verwaltung | Seitenleiste mit Ordnern und beliebig tiefen Unterordnern (Rechtsklick → „Neuer Ordner…“ / „Neuer Unterordner…“, Sessions und Ordner per Drag & Drop verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund; Export/Import der gesamten Konfiguration; optional gemeinsame Konfiguration auf einem Netzlaufwerk für alle Macs (siehe unten) |
+| Pane-Freigabe | Ein Pane für andere Rechner mit MacT-1000 freigeben (Pane-Menü → „Session freigeben…“): verschlüsselt per SSH, Passwort, nur lesen oder Schreiben nach Bestätigung, Gültigkeit, Zuschauerliste mit Trennen; Zuschauer verbinden sich per Quick Connect `share host` (siehe unten) |
+| Session-Verwaltung | Seitenleiste mit Ordnern und beliebig tiefen Unterordnern (Rechtsklick → „Neuer Ordner…“ / „Neuer Unterordner…“, Sessions und Ordner per Drag & Drop verschieben), Farben, Filter; Passwörter verschlüsselt über den macOS-Schlüsselbund, Standard-Passwort pro Ordner; CSV-Import mit Unterordnern; Export/Import der gesamten Konfiguration; optional gemeinsame Konfiguration auf einem Netzlaufwerk für alle Macs (siehe unten) |
 | Komfort | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200`, `rdp admin@host`), Drag & Drop von Sessions auf Panes (Rand = geteilt öffnen), Ordner „Alle als Kacheln öffnen“, Suche im Puffer, Puffer als Log speichern, Rechtsklick kopieren/einfügen, 4 Farbschemata, Layout-Wiederherstellung |
 
 ## Konfiguration exportieren / importieren
@@ -102,6 +103,29 @@ Menü **Datei → Gesamte Konfiguration exportieren…** (⇧⌘E) oder in den E
 **Datei → Konfiguration importieren…** zeigt den Inhalt der Datei und bietet „Zusammenführen“ (gleiche Sessions werden aktualisiert, neue ergänzt, lokale Passwörter bleiben erhalten) oder „Ersetzen“. Einstellungen und Layout lassen sich einzeln abwählen; ein importiertes Layout öffnet sich beim nächsten Start. Ältere Sessions-Exporte (reine JSON-Liste) werden ebenfalls erkannt. SSH-Schlüssel-Passphrasen aus dem macOS-Schlüsselbund werden nicht exportiert.
 
 „Nur Adressbuch exportieren (ohne Passwörter)…“ erzeugt wie bisher eine einfache Sessions-Liste.
+
+Werden Passwörter mit exportiert, sind auch die Standard-Passwörter der Ordner enthalten (ab 1.7.0, ebenfalls verschlüsselt).
+
+## Sessions aus CSV importieren (ab 1.7.0)
+
+Menü **Datei → Sessions aus CSV importieren…**, in den Einstellungen (⚙) oder per Rechtsklick auf einen Ordner → **„Sessions aus CSV hierher importieren…“**. So lassen sich Lesezeichen aus Excel, einer Inventarliste oder einem anderen Programm übernehmen – samt Ordnern und Unterordnern.
+
+- **Spalten:** werden an der Kopfzeile erkannt (deutsch oder englisch, Groß-/Kleinschreibung egal): `Ordner`, `Name`, `Typ`, `Host`, `Port`, `Benutzer`, `Passwort`, `Schlüsseldatei`, `Jump-Host`, `Schnittstelle` (seriell, z. B. `COM3` oder `/dev/cu.usbserial`), `Baudrate`, `Domäne` (RDP), `Farbe`, `Standardpasswort`. Englisch z. B. `Folder`, `Hostname`, `Protocol`, `User`, `Password`. Im Dialog lässt sich jede Spalte von Hand zuordnen oder ignorieren; ohne Kopfzeile gilt die Reihenfolge Name, Typ, Host, Port, Benutzer, Ordner, Passwort.
+- **Unterordner:** Im Feld `Ordner` mit `/` trennen – auch `\` oder `>` werden erkannt: `Rechenzentrum/Core/Switche` legt drei verschachtelte Ordner an. Fehlende Ordner entstehen automatisch. Mit **Zielordner** landet der ganze Import unter einem vorhandenen Ordner.
+- **Typ:** `SSH`, `Telnet`, `RDP`, `Seriell` (auch `serial`, `COM`, `Konsole`), `Lokal`. Leere Felder bekommen den gewählten Standardtyp. Der Port ist optional (22/23/3389), `user@host:port` im Host-Feld wird zerlegt.
+- **Ordnerzeilen:** Eine Zeile mit Typ `Ordner` legt einen (auch leeren) Ordner an; steht dort ein Passwort oder `Standardpasswort`, wird es das Standard-Passwort dieses Ordners (siehe „Passwörter“).
+- **Trennzeichen und Zeichensatz:** Semikolon, Komma, Tabulator oder `|` werden automatisch erkannt, Anführungszeichen wie in Excel. UTF-8 (mit/ohne BOM), UTF-16 und Windows-1252 (Excel-Export mit Umlauten) werden gelesen.
+- **Vorschau:** zeigt vor dem Import, was neu angelegt, aktualisiert oder übersprungen wird und welche Zeilen Fehler haben (z. B. fehlender Host). Bereits vorhandene Sessions (gleicher Ordner, Name, Typ, Host, Port, Benutzer) werden wahlweise übersprungen, aktualisiert oder trotzdem hinzugefügt.
+- Passwörter aus der CSV werden verschlüsselt gespeichert. Die CSV-Datei danach am besten löschen.
+- **Vorlage:** „Vorlage speichern…“ im Dialog oder `beispiele/sessions-import.csv` (englisch: `sessions-import-en.csv`):
+
+```
+Ordner;Name;Typ;Host;Port;Benutzer;Passwort;Schlüsseldatei;Baudrate;Standardpasswort
+Rechenzentrum;;Ordner;;;;;;;GeheimesRZ-Passwort
+Rechenzentrum/Core/Switche;core-sw01;SSH;10.0.0.1;22;admin;;;;
+Rechenzentrum/Core/Router;edge-rt01;Telnet;10.0.1.1;23;admin;EigenesPasswort;;;
+Labor/Konsolen;Konsole COM3;Seriell;COM3;;;;;9600;
+```
 
 ## Gemeinsame Konfiguration auf einem Netzlaufwerk
 
@@ -330,7 +354,39 @@ Pro Session (Session bearbeiten) gibt es dazu zwei Optionen:
 - „Verbindung mit Datei-Browser (SCP) teilen“ (Standard: an) – ausschalten, falls die eigene `~/.ssh/config` bereits ControlMaster nutzt oder es Probleme gibt.
 - „Klassisches SCP-Protokoll (scp -O)“ – für Geräte ohne SFTP-Subsystem (z. B. manche Switches, Router, Dropbear). Standard ist das moderne scp über SFTP.
 
+**Unter Windows (ab 1.7.0 per SCP):** Windows-OpenSSH kennt kein ControlMaster, deshalb baut der Datei-Browser eine eigene SSH-Verbindung auf (Bibliothek ssh2) und fragt Passwort, Passphrase oder Host-Schlüssel bei Bedarf selbst ab; ein gespeichertes Passwort der Session (oder das Standard-Passwort des Ordners) wird automatisch verwendet. Schlüssel aus `%USERPROFILE%\.ssh` und der Dienst „OpenSSH Authentication Agent“ werden genutzt, sofern er läuft. Verzeichnisse werden wie auf dem Mac per Shell gelistet, übertragen wird mit dem klassischen SCP-Protokoll (`scp -t`/`scp -f` auf dem Server) – das funktioniert auch auf Servern und Geräten ohne SFTP-Subsystem. Bietet der Server keine Shell, aber SFTP, wird nur das Auflisten über SFTP erledigt. Bis 1.6.0 lief die Windows-Version komplett über SFTP; wer das braucht, startet MacT-1000 mit der Umgebungsvariablen `MACT_FX_BACKEND=sftp`.
+
 Hinweis: Der Browser listet Verzeichnisse per `ls` in einer POSIX-Shell auf dem Server. Auf Geräten ohne Unix-Shell (z. B. Cisco IOS) funktioniert das Durchsuchen nicht; dort ist SCP meist ohnehin nur über die Geräte-CLI nutzbar.
+
+## Pane-Freigabe (ab 1.8.0)
+
+Ein laufendes Pane (lokale Shell, SSH, Telnet, Seriell, Befehl) lässt sich für andere Rechner freigeben, auf denen ebenfalls MacT-1000 läuft – zum gemeinsamen Arbeiten, für Support oder Schulungen. Der Zuschauer sieht das Pane live und kann mit Erlaubnis auch mittippen. Mac und Windows können sich gegenseitig verbinden.
+
+**Freigeben:** Pane-Menü (`⋯` oben rechts im Pane) → **„Session freigeben…“**. Im Dialog:
+
+- **Name** – sieht der Zuschauer in seiner Kopfzeile.
+- **Passwort** – wird zufällig erzeugt (↻ für ein neues, mindestens 4 Zeichen), beim Freigeben in die Zwischenablage kopiert. Auf einem anderen Weg weitergeben (z. B. Telefon).
+- **Zugriff** – „Nur lesen“, „Lesen, Schreiben nach meiner Bestätigung“ oder „Lesen und Schreiben ohne Rückfrage“.
+- **Gültig** – bis zum Beenden oder 1/4/8/24 Stunden; danach werden alle Zuschauer getrennt.
+- Darunter stehen die Adressen dieses Rechners, der Port und der **Fingerprint**.
+
+Beim ersten Mal muss das Häkchen **„Freigaben von Panes auf diesem Rechner erlauben“** gesetzt werden (auch in den Einstellungen → „Freigaben“). Standardmäßig ist die Funktion aus, und es lauscht kein Port.
+
+Ein freigegebenes Pane hat einen türkisfarbenen Rahmen und in der Kopfzeile die Anzeige **„Freigegeben · n“** (n = Zuschauer, „· schreibt“, wenn jemand Schreibrecht hat). Ein Klick darauf öffnet die Verwaltung: Zuschauer mit Adresse und Uhrzeit, **Schreiben erlauben / Schreibrecht entziehen**, **Trennen**, Zugriff ändern, Passwort anzeigen oder kopieren, **Freigabe beenden**. Wird das Pane geschlossen, endet die Freigabe; nach „Neu verbinden“ läuft sie mit der neuen Verbindung weiter.
+
+**Verbinden (Zuschauer):** Quick Connect `share 192.168.1.20` (anderer Port: `share 192.168.1.20:7100`, auch `freigabe host`) oder eine gespeicherte Session vom Typ **„Freigabe“** (Rechner, Port, Passwort, optional Name der Freigabe und eigener Anzeigename). Beim ersten Verbinden fragt MacT-1000, ob der angezeigte Fingerprint stimmt – mit dem Fingerprint im Freigabe-Dialog des anderen Rechners vergleichen. Danach wird er gemerkt; ändert er sich später, wird die Verbindung abgelehnt (Eintrag unter Einstellungen → „Freigaben“ → „Bekannte Freigaben“ entfernen, wenn MacT-1000 dort neu installiert wurde). Laufen auf dem Rechner mehrere Freigaben mit demselben Passwort, erscheint eine Auswahl.
+
+Der Zuschauer bekommt zuerst den aktuellen Bildschirminhalt samt Verlauf (bis 2000 Zeilen), dann alles live. Die **Größe bestimmt das freigegebene Pane**; ist das eigene Pane kleiner, erscheinen Rollbalken. Eingaben ohne Schreibrecht werden nicht gesendet, ein Hinweis bietet **„Schreibrecht anfordern“** an (auch Klick auf „Nur lesen“ in der Kopfzeile oder Pane-Menü). Beim Freigebenden erscheint dann im Pane „… möchte in dieser Session schreiben“ mit **Erlauben / Ablehnen** (ohne Antwort nach 60 Sekunden abgelehnt). Bei „Lesen und Schreiben ohne Rückfrage“ gilt das Schreibrecht sofort. Mit Schreibrecht wird die Anzeige orange; ein Klick darauf gibt es wieder ab.
+
+**Sicherheit:**
+
+- Die Verbindung läuft über SSH (Bibliothek ssh2) – verschlüsselt, mit eigenem Schlüssel pro Rechner (ed25519) und Fingerprint-Prüfung. Zuschauer bekommen keine Shell und keinen Dateizugriff, nur das eine freigegebene Pane.
+- Anmeldung nur mit dem Passwort der Freigabe. Nach 5 falschen Versuchen innerhalb von 10 Minuten wird die Adresse 10 Minuten gesperrt; höchstens 20 Zuschauer pro Freigabe.
+- Schreibrecht nur, wenn der Freigebende es erlaubt. Bei einer **lokalen Shell** warnt MacT-1000 ausdrücklich: Ein Zuschauer mit Schreibrecht arbeitet dann mit deinen Rechten auf deinem Rechner. Bei SSH-/Telnet-Sessions tippt er mit deiner Anmeldung auf dem Zielgerät.
+- Beim Beenden von MacT-1000 werden alle Freigaben beendet; die Rückfrage beim Beenden nennt laufende Freigaben mit Zuschauern.
+- Gedacht für das eigene Netz oder VPN. Über das Internet nicht direkt öffnen, sondern z. B. per VPN oder SSH-Tunnel (`ssh -L 7022:localhost:7022 benutzer@rechner`, dann `share localhost`).
+
+**Einstellungen → „Freigaben“:** Freigaben erlauben, **Port** (Standard 7022), **Netzwerkadresse** (leer = alle; z. B. nur die VPN-Adresse), eigener Name beim Zuschauen, Fingerprint dieses Rechners, bekannte Freigaben anderer Rechner. Beim ersten Freigeben fragt die Firewall (macOS bzw. Windows) eventuell, ob eingehende Verbindungen erlaubt werden; ist der Rechner nicht erreichbar, Port 7022/TCP in der Firewall freigeben.
 
 ## Kopieren beim Markieren
 
@@ -386,6 +442,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 - **SSH:** Beim Passwort-Prompt des Zielhosts (`user@host's password:` bzw. `Password:`) gibt MacT-1000 das gespeicherte Passwort einmal automatisch ein. Wird es abgelehnt, erscheint ein Hinweis und du gibst es von Hand ein. Prompts von Jump-Hosts und Schlüssel-Passphrasen werden nicht beantwortet (Passphrasen: Schlüsselbund-Option).
 - **Telnet:** Benutzer + Passwort werden bei `login:` / `Password:` eingegeben; das Häkchen „Auto-Login“ wird beim Eintippen eines Passworts automatisch gesetzt.
 - **Nach manueller Anmeldung speichern:** Meldest du dich per SSH oder Telnet von Hand mit Passwort an, blendet MacT-1000 nach erfolgreichem Login oben im Pane ein: „Passwort … speichern?“ mit *Speichern* / *Nicht jetzt* / *Nie für diese Session*. Bei einer Quick-Connect-Verbindung wird dabei die Session mit Passwort angelegt. Wurde das Passwort direkt erneut abgefragt (falsch), wird nichts angeboten; `sudo`-Abfragen werden ignoriert. Abschaltbar unter Einstellungen.
+- **Standard-Passwort pro Ordner (ab 1.7.0):** Rechtsklick auf einen Ordner → **„Standard-Passwort festlegen…“**. Es gilt für alle SSH- und Telnet-Sessions in diesem Ordner und in allen Unterordnern, die kein eigenes Passwort haben – praktisch, wenn z. B. alle Switche eines Standorts dasselbe Passwort nutzen. Hat ein Unterordner ein eigenes Standard-Passwort, gilt dieses (der nächstgelegene Ordner gewinnt). Ein eigenes Passwort der Session hat immer Vorrang. Ordner mit Standard-Passwort tragen in der Liste die Markierung **PW**; der Session-Dialog zeigt im leeren Passwortfeld „leer = Standard-Passwort des Ordners …“. Es wird wie die Session-Passwörter verschlüsselt gespeichert (macOS-Schlüsselbund bzw. Windows DPAPI), wandert beim Umbenennen und Verschieben des Ordners mit und wird beim Löschen des Ordners entfernt. Der Datei-Browser nutzt es ebenfalls. Es bleibt auf dem jeweiligen Rechner und wird nicht über den Netzordner verteilt; im Konfigurations-Export mit Passwörtern ist es enthalten. Ändern oder entfernen: erneut Rechtsklick → „Standard-Passwort ändern…“.
 - **Schlüsselbund-Zugriff:** Da die App nicht mit einer Apple-Entwickler-ID signiert ist, fragt macOS nach einem Update evtl. „MacT-1000 möchte auf den Schlüssel „MacT-1000 Safe Storage“ zugreifen“ – mit dem Mac-Passwort und **Immer erlauben** bestätigen. Wird der Zugriff verweigert, bleiben die Passwörter verschlüsselt erhalten (früher gingen sie dabei verloren); die Session zeigt dann „gesperrt“ und das Passwort kann neu eingegeben werden.
 
 ## Tastenkürzel
@@ -420,7 +477,7 @@ Unter Windows bleibt Strg+Buchstabe für die Shell frei (Strg+C, Strg+D, Strg+R 
 | Terminal leeren | ⌘L | Strg+Umschalt+L |
 | Pane / Tab schließen | ⌘W / ⇧⌘W | Strg+Umschalt+W / Strg+Umschalt+Q |
 | Seitenleiste ein/aus | ⌘B | Strg+Umschalt+B |
-| Datei-Browser (SCP bzw. SFTP) für das aktive SSH-Pane | ⇧⌘F | Strg+Umschalt+D |
+| Datei-Browser (SCP) für das aktive SSH-Pane | ⇧⌘F | Strg+Umschalt+D |
 | Server anzeigen (TFTP, FTP, HTTP, SFTP/SCP) | ⌥⌘T | Alt+Umschalt+S |
 | Einstellungen | ⌘, | Strg+, |
 | Gesamte Konfiguration exportieren | ⇧⌘E | – (Menü Datei) |
@@ -438,7 +495,7 @@ Beendete Sessions lassen sich mit ⌘R bzw. Strg+Umschalt+R neu verbinden (Enter
 - **Verschieben:** Session mit der Maus auf einen Ordner ziehen (der Ordner wird blau markiert). Auf eine Session in einem Ordner ziehen geht auch. Auf „Sessions (ohne Ordner)“ oder auf die freie Fläche ziehen nimmt die Session aus dem Ordner. Alternativ Rechtsklick auf die Session → „In Ordner verschieben…“.
 - **Unterordner:** Rechtsklick auf einen Ordner → „Neuer Unterordner…“ (im Dialog lässt sich der Oberordner auch frei wählen). Beliebig tief verschachtelbar, z. B. `Rechenzentrum › Core › Switche`. Im Session-Dialog kann der Ordner auch als Pfad eingetippt werden: `Rechenzentrum/Core/Switche` – fehlende Ordner werden automatisch angelegt. Ordnernamen dürfen deshalb kein „/“ enthalten.
 - **Ordner verschieben:** einen Ordner auf einen anderen ziehen macht ihn (samt Inhalt und Unterordnern) zum Unterordner; auf „Sessions (ohne Ordner)“ ziehen oder Rechtsklick → „Auf oberste Ebene verschieben“ holt ihn nach oben. Jeder Ordner lässt sich einzeln einklappen; die Zahl am Ordner zählt alle Sessions inklusive Unterordnern.
-- **Ordner-Rechtsklick:** Alle als Kacheln öffnen (inklusive Unterordner), neue Session direkt in diesem Ordner, neuer Unterordner, umbenennen, löschen. Umbenennen eines Oberordners passt alle Unterordner und Sessions mit an. Beim Löschen werden die enthaltenen Sessions und Unterordner nicht gelöscht, sondern eine Ebene nach oben verschoben (bei einem Ordner der obersten Ebene nach „Sessions“).
+- **Ordner-Rechtsklick:** Alle als Kacheln öffnen (inklusive Unterordner), neue Session direkt in diesem Ordner, Sessions aus CSV hierher importieren, neuer Unterordner, umbenennen, Standard-Passwort festlegen, löschen. Umbenennen eines Oberordners passt alle Unterordner und Sessions mit an. Beim Löschen werden die enthaltenen Sessions und Unterordner nicht gelöscht, sondern eine Ebene nach oben verschoben (bei einem Ordner der obersten Ebene nach „Sessions“).
 - Sessions aus der Liste auf ein Pane zu ziehen öffnet sie wie bisher.
 - Leere Ordner werden in den Einstellungen gespeichert und beim Konfigurations-Export mitgenommen.
 
@@ -483,12 +540,16 @@ src/update.js     Abfrage des neuesten Releases auf GitHub (Update-Hinweis)
 src/updater.js    Automatisches Update: wählt die Variante für macOS bzw. Windows
 src/updater-mac.js Update unter macOS: Download, SHA-256-Prüfung, Entpacken, Austausch nach dem Beenden
 src/updater-win.js Update unter Windows: Installer laden, SHA-256-Prüfung, stille Installation nach dem Beenden
-src/sftp.js       SFTP-Datei-Browser (Windows)
+src/sftp.js       SSH-Anmeldung des Windows-Datei-Browsers (ssh2) und SFTP-Rückfalloption
+src/scp-win.js    Datei-Browser unter Windows: Auflisten per Shell, Übertragung per SCP-Protokoll
 src/compat.js     Kennungen früherer Versionen (Datenübernahme, frühere Links und Formate)
 src/launch.js     Aufrufe von außen: Kommandozeile und mact1000://-Links auswerten
+src/share.js      Pane-Freigabe: Freigabe-Dienst (SSH-Server, Passwort, Sperre, Schreibrecht) und Zuschauer-Verbindung
 build/bin/mact1000 Kommandozeilen-Werkzeug (in der Mac-App unter Contents/Resources/bin)
 build/installer.nsh Ergänzungen für den Windows-Installer (Links, Ablösung von WinT-1000)
-beispiele/        Vorlagen: Automator-Ablauf, .command-Datei, AppleScript (macOS), Batch und PowerShell (Windows)
+beispiele/        Vorlagen: Automator-Ablauf, .command-Datei, AppleScript (macOS), Batch und PowerShell (Windows), CSV-Vorlage für den Session-Import
+renderer/csv-import.js CSV-Import von Sessions mit Ordnern und Unterordnern
+renderer/share.js Pane-Freigabe: Dialoge, Anzeige in der Kopfzeile, Zuschauerverwaltung, Schreibrecht-Anfragen
 renderer/i18n.js  Sprachumschaltung Deutsch/Englisch; renderer/i18n-en.js enthält die englischen Texte
 renderer/         Oberfläche: Tabs, Split-Layout, Dialoge, Datei-Browser, Server-Tab, Makros und Makro-Schleifen, Aufrufe von außen (xterm.js)
 test/             Unit-, Telnet-, SCP-, Server- und End-to-End-Tests
@@ -510,7 +571,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.6.0`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.0`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|
@@ -523,6 +584,7 @@ Damit Update-Prüfung und automatisches Update funktionieren, im Repository [den
 
 - Getestet wurde nur in einer Linux-Testumgebung (Oberfläche im macOS- und im Windows-Modus, Abläufe, Update-Logik mit Testserver). Ein Test auf einem echten Mac und einem echten Windows-Rechner steht aus – auch für Installer, Datenübernahme und automatisches Update.
 - Die Firewall (macOS bzw. Windows) fragt beim ersten Start eines Servers (TFTP/FTP/HTTP/SFTP) ggf., ob eingehende Verbindungen erlaubt werden.
+- Pane-Freigabe: getestet wurde nur innerhalb einer Testumgebung (Freigabe und Zuschauer auf demselben Rechner über 127.0.0.1), nicht zwischen zwei echten Rechnern im Netz. Die Firewall fragt beim ersten Freigeben ggf. ebenfalls.
 
 ## Lizenz
 

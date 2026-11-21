@@ -2,9 +2,9 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.6.0 · Copyright © 2026 Harald (Mac)Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.0 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
-Terminal client for **macOS and Windows** – local shell, SSH (with SCP/SFTP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
+Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
 Project and updates: [github.com/denkteich/MacT-1000](https://github.com/denkteich/MacT-1000)
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.6.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.6.0-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.0-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.0-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.6.0-setup.exe` | `MacT-1000-1.6.0-portable.exe` |
+| File | `MacT-1000-1.8.0-setup.exe` | `MacT-1000-1.8.0-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -61,7 +61,7 @@ Features and user interface are the same as on macOS. Differences:
 |---|---|---|
 | Local shell | Login shell (`$SHELL`, e.g. zsh) | PowerShell 7 (`pwsh`), otherwise Windows PowerShell, otherwise `cmd.exe`; custom shell in Settings |
 | SSH | System `ssh` | built-in OpenSSH client (`C:\Windows\System32\OpenSSH\ssh.exe`); if missing: Settings → System → Optional features → "OpenSSH Client" |
-| File browser | via SCP over the terminal's connection | via SFTP (own connection, asks for password/passphrase itself) |
+| File browser | via SCP over the terminal's connection | via SCP (own connection, asks for password/passphrase itself; from 1.7.0, previously SFTP) |
 | RDP | "Windows App" or FreeRDP | Remote Desktop Connection (`mstsc.exe`) |
 | Serial | `/dev/cu.*` | COM ports, e.g. `COM3 115200` in Quick Connect |
 | Passwords | encrypted, key in the macOS Keychain | encrypted with the Windows user account (DPAPI) |
@@ -76,7 +76,7 @@ Features and user interface are the same as on macOS. Differences:
 | Local shell | Login shell, start directory, start command; duplicating (⌘D / Ctrl+Shift+E) keeps the current directory |
 | SSH keys & Keychain (macOS) | Per-session option (default: on): the passphrase is stored in the macOS Keychain on the first connection (`UseKeychain`/`AddKeysToAgent`) and used automatically afterwards. Also: File → "Store SSH key in Keychain…" and `ssh-add --apple-load-keychain` at startup |
 | SSH | Uses the system `ssh` → `~/.ssh/config`, keys, ssh-agent, jump hosts (-J), port forwarding (L/R/D), agent/X11 forwarding, keepalive, option for legacy algorithms (older switches); a stored password is entered automatically at the login prompt (see "Passwords") |
-| File transfer (SCP/SFTP) | Sidebar tab "Files (SCP)" (Windows: "Files (SFTP)") follows the active SSH pane: browse directories, upload/download files and folders with progress, drag & drop from Finder/Explorer, create folders, rename, delete, "Change to this directory in the terminal (cd)" |
+| File transfer (SCP) | Sidebar tab "Files (SCP)" follows the active SSH pane: browse directories, upload/download files and folders with progress, drag & drop from Finder/Explorer, create folders, rename, delete, "Change to this directory in the terminal (cd)" |
 | Servers (TFTP, FTP, HTTP, SFTP/SCP) | Sidebar tab "Servers": four file servers, each configurable and startable on its own – directory, port, network address, user/password, permissions (read, upload, overwrite, delete). Shared transfer list with progress, e.g. for firmware updates and configuration backups of switches/routers |
 | External calls | Start from Automator, Shortcuts, AppleScript, Terminal, batch files or PowerShell (`mact1000 --local --run "uptime"`) and via `mact1000://` links – local shell, SSH, Telnet, serial, RDP, saved sessions and folders, with commands and macros, output to a file and automatic closing afterwards (`--log`, `--close`, `--quit`) as well as fixed slots in a split tab (`--layout core --slot top`, then `--slot bottom`); commands only after confirmation |
 | Updates | Checks the latest GitHub release at startup and every 6 hours and asks first: install now, remind later or skip this version; then downloads (SHA-256 verified), installs after confirmation and restarts |
@@ -87,6 +87,7 @@ Features and user interface are the same as on macOS. Differences:
 | Multi-Input | Keystrokes go to all selected panes at the same time – across tabs. Include/exclude per pane via the ⇶ symbol. Selected panes have an orange border |
 | Macros | Sequences "wait for output → send input", created manually or recorded, variables asked for at start, loops over numbers (1,2,3 7-10) or texts, autostart after connecting, execution on several panes; auto-responses to specific output (see below) |
 | Multi-Paste | Send text/commands to selected panes: as a block (bracketed paste) or line by line with a delay, placeholders `{{name}}`, `{{host}}`, `{{user}}`, `{{n}}`, history of the last 20 entries |
+| Sharing panes | Share a pane with other computers running MacT-1000 (pane menu → "Share session…"): encrypted via SSH, password, read only or write after approval, expiry, viewer list with disconnect; viewers connect via Quick Connect `share host` (see below) |
 | Session management | Sidebar with folders and subfolders of any depth (right-click → "New folder…" / "New subfolder…", move sessions and folders by drag & drop), colors, filter; passwords stored encrypted; export/import of the entire configuration; optional shared configuration on a network drive for all computers (see below) |
 | Convenience | Quick Connect (`user@host`, `telnet host 2001`, `/dev/cu.usbserial 115200` or `COM3 115200`, `rdp admin@host`), drag & drop of sessions onto panes (edge = open split), folder "Open all as tiles", search in the buffer, save buffer as log, copy/paste with right-click, 4 color schemes, layout restore, English and German user interface |
 
@@ -102,6 +103,29 @@ Menu **File → Export entire configuration…** (⇧⌘E on the Mac) or in Sett
 **File → Import configuration…** shows the contents of the file and offers "Merge" (identical sessions are updated, new ones added, local passwords are kept) or "Replace". Settings and layout can be deselected individually; an imported layout opens at the next start. Older session exports (plain JSON list) and exports from WinT-1000 are recognized as well. SSH key passphrases from the macOS Keychain are not exported.
 
 "Export Address Book Only (without Passwords)…" creates a simple session list.
+
+If passwords are exported, the default passwords of folders are included as well (from 1.7.0, also encrypted).
+
+## Importing sessions from CSV (from 1.7.0)
+
+Menu **File → Import sessions from CSV…**, in the settings (⚙) or right-click a folder → **"Import sessions from CSV into this folder…"**. This takes over bookmarks from Excel, an inventory list or another program – including folders and subfolders.
+
+- **Columns:** detected from the header row (English or German, case-insensitive): `Folder`, `Name`, `Type`/`Protocol`, `Host`/`Hostname`, `Port`, `User`, `Password`, `Key file`, `Jump host`, `Device` (serial, e.g. `COM3` or `/dev/cu.usbserial`), `Baud rate`, `Domain` (RDP), `Color`, `Default password`. German headers such as `Ordner`, `Benutzer`, `Passwort` work too. Each column can be assigned or ignored manually in the dialog; without a header row the order Name, Type, Host, Port, User, Folder, Password applies.
+- **Subfolders:** separate them with `/` in the `Folder` field – `\` or `>` are recognized too: `Datacenter/Core/Switches` creates three nested folders. Missing folders are created automatically. With **Target folder** the whole import goes below an existing folder.
+- **Type:** `SSH`, `Telnet`, `RDP`, `Serial` (also `COM`, `Console`), `Local`. Empty fields get the selected default type. The port is optional (22/23/3389); `user@host:port` in the host field is split up.
+- **Folder rows:** a row with type `Folder` creates a (possibly empty) folder; a password or `Default password` there becomes the default password of this folder (see "Passwords").
+- **Delimiter and encoding:** semicolon, comma, tab or `|` are detected automatically, quotes as in Excel. UTF-8 (with/without BOM), UTF-16 and Windows-1252 (Excel export with umlauts) are read.
+- **Preview:** shows before importing what will be created, updated or skipped and which rows have errors (e.g. missing host). Existing sessions (same folder, name, type, host, port, user) are skipped, updated or added anyway – your choice.
+- Passwords from the CSV are stored encrypted. Best delete the CSV file afterwards.
+- **Template:** "Save template…" in the dialog or `beispiele/sessions-import-en.csv` (German: `sessions-import.csv`):
+
+```
+Folder;Name;Type;Host;Port;User;Password;Key file;Baud rate;Default password
+Datacenter;;Folder;;;;;;;SecretDC-Password
+Datacenter/Core/Switches;core-sw01;SSH;10.0.0.1;22;admin;;;;
+Datacenter/Core/Routers;edge-rt01;Telnet;10.0.1.1;23;admin;OwnPassword;;;
+Lab/Consoles;Console COM3;Serial;COM3;;;;;9600;
+```
 
 ## Shared configuration on a network drive
 
@@ -311,9 +335,9 @@ For all servers:
 | HTTP | 8080 | Directory listing in the browser (can be turned off, then `index.html` is served), download with resume (Range), optional user/password (Basic Auth; empty user = no login). Upload via `PUT`/`POST` (`curl -T file.bin http://<IP>:8080/`) or by drag & drop in the directory listing, delete via `DELETE`. |
 | SFTP/SCP | 2222 | Encrypted over SSH: SFTP and classic SCP (`scp -O`, as used by switches and routers), recursive as well. Login with user/password and/or public keys (field in `authorized_keys` format). Own host key (ed25519), generated on the first start and kept; the fingerprint is shown. No shell access – other commands are rejected. Examples: `sftp -P 2222 user@<IP>`, `scp -O -P 2222 file.bin user@<IP>:/` |
 
-## File transfer (SCP / SFTP)
+## File transfer (SCP)
 
-In an SSH pane click **⇅** in the pane bar (or ⇧⌘F / Ctrl+Shift+D, or pane menu → "Transfer files (SCP)…"). On the left the tab **Files (SCP)** (Windows: **Files (SFTP)**) opens with the server's home directory.
+In an SSH pane click **⇅** in the pane bar (or ⇧⌘F / Ctrl+Shift+D, or pane menu → "Transfer files (SCP)…"). On the left the tab **Files (SCP)** opens with the server's home directory.
 
 - **Navigate:** double-click folders, ↰ = one level up, ⌂ = home, type a path at the top + Enter
 - **In sync with the shell (default: on):** if you change the directory in the terminal with `cd`, the browser follows automatically. Toggle **⇄** in the toolbar (or ⋯ → "Keep in sync with the shell's directory", or Settings). The directory is detected via the OSC 7 path message, otherwise via the prompt line (`user@host:~/path$`, `root@host:/etc#`) or the window title. If the prompt does not show a path, use ⋯ → "Set up path message in the shell (bash/zsh)" – this applies to the running shell; add the same line to `~/.bashrc` or `~/.zshrc` permanently. If you navigate in the browser yourself, that view stays until the shell changes directory the next time. If the shell directory is not readable for the file browser (e.g. after `sudo -i` or ssh to another host), the previous list stays with a notice.
@@ -324,13 +348,45 @@ In an SSH pane click **⇅** in the pane bar (or ⇧⌘F / Ctrl+Shift+D, or pane
 - **More actions (right-click):** rename, delete (recursive, with confirmation), copy path, change to this directory in the terminal (cd). Under ⋯: show hidden files.
 - **Transfers** appear at the bottom with progress, speed and remaining time; running ones can be canceled with ×. Before overwriting existing files you are asked.
 
-**Login (macOS):** terminal and file browser share one SSH connection (OpenSSH `ControlMaster`, sockets in `~/.mact1000/cm/`). If the terminal session is logged in, there is no second password/2FA prompt. If no session is open, MacT-1000 asks once in its own dialog for password or host key and keeps that connection open for up to 10 minutes without use; it is closed when MacT-1000 quits. Keys from the Keychain and ssh-agent are used as usual. On Windows the file browser uses its own SFTP connection and asks for password/passphrase itself.
+**Login (macOS):** terminal and file browser share one SSH connection (OpenSSH `ControlMaster`, sockets in `~/.mact1000/cm/`). If the terminal session is logged in, there is no second password/2FA prompt. If no session is open, MacT-1000 asks once in its own dialog for password or host key and keeps that connection open for up to 10 minutes without use; it is closed when MacT-1000 quits. Keys from the Keychain and ssh-agent are used as usual.
 
 Per session (Edit session) there are two options:
 - "Share connection with file browser (SCP)" (default: on) – turn off if your own `~/.ssh/config` already uses ControlMaster or there are problems.
 - "Classic SCP protocol (scp -O)" – for devices without an SFTP subsystem (e.g. some switches, routers, Dropbear). The default is modern scp over SFTP.
 
+**On Windows (SCP from 1.7.0):** Windows OpenSSH has no ControlMaster, so the file browser opens its own SSH connection (ssh2 library) and asks for password, passphrase or host key itself when needed; a stored session password (or the folder's default password) is used automatically. Keys from `%USERPROFILE%\.ssh` and the "OpenSSH Authentication Agent" service are used if it is running. Directories are listed via the shell as on the Mac; transfers use the classic SCP protocol (`scp -t`/`scp -f` on the server) – this also works on servers and devices without an SFTP subsystem. If the server offers no shell but SFTP, only listing is done via SFTP. Up to 1.6.0 the Windows version used SFTP throughout; if you need that, start MacT-1000 with the environment variable `MACT_FX_BACKEND=sftp`.
+
 Note: the browser lists directories via `ls` in a POSIX shell on the server. On devices without a Unix shell (e.g. Cisco IOS) browsing does not work; there SCP is usually only usable via the device CLI anyway.
+
+## Sharing panes (from 1.8.0)
+
+A running pane (local shell, SSH, Telnet, serial, command) can be shared with other computers that also run MacT-1000 – for working together, support or training. The viewer sees the pane live and, with permission, can type as well. Mac and Windows can connect to each other.
+
+**Sharing:** pane menu (`⋯` at the top right of the pane) → **"Share session…"**. In the dialog:
+
+- **Name** – shown in the viewer's pane header.
+- **Password** – generated randomly (↻ for a new one, at least 4 characters) and copied to the clipboard when sharing. Pass it on through another channel (e.g. phone).
+- **Access** – "Read only", "Read, write after my approval" or "Read and write without asking".
+- **Valid** – until stopped or 1/4/8/24 hours; afterwards all viewers are disconnected.
+- Below are the addresses of this computer, the port and the **fingerprint**.
+
+The first time, tick **"Allow sharing panes on this computer"** (also in Settings → "Sharing"). The feature is off by default and no port is listening.
+
+A shared pane has a turquoise frame and shows **"Shared · n"** in its header (n = viewers, "· writing" if someone has write access). Clicking it opens the manager: viewers with address and time, **Allow writing / Revoke write access**, **Disconnect**, change access, show or copy the password, **Stop sharing**. Closing the pane stops sharing; after "Reconnect" sharing continues with the new connection.
+
+**Connecting (viewer):** Quick Connect `share 192.168.1.20` (other port: `share 192.168.1.20:7100`) or a saved session of type **"Share"** (computer, port, password, optionally share name and your own display name). On the first connection MacT-1000 asks whether the fingerprint shown is correct – compare it with the fingerprint in the share dialog on the other computer. It is remembered afterwards; if it changes later, the connection is refused (remove the entry under Settings → "Sharing" → "Known shares" if MacT-1000 was reinstalled there). If several shares with the same password run on that computer, you can choose one.
+
+The viewer first receives the current screen including scrollback (up to 2000 lines), then everything live. **The shared pane determines the size**; if your own pane is smaller, scroll bars appear. Input without write access is not sent; a hint offers **"Request write access"** (also by clicking "Read only" in the header or via the pane menu). The person sharing then sees "… wants to write in this session" with **Allow / Deny** in the pane (denied automatically after 60 seconds). With "Read and write without asking", write access applies immediately. With write access the indicator turns orange; clicking it gives write access back.
+
+**Security:**
+
+- The connection uses SSH (ssh2 library) – encrypted, with a key per computer (ed25519) and fingerprint check. Viewers get no shell and no file access, only the one shared pane.
+- Login only with the share password. After 5 wrong attempts within 10 minutes the address is blocked for 10 minutes; at most 20 viewers per share.
+- Write access only if the person sharing allows it. For a **local shell** MacT-1000 warns explicitly: a viewer with write access then works with your permissions on your computer. In SSH/Telnet sessions they type with your login on the target device.
+- Quitting MacT-1000 stops all shares; the quit confirmation lists running shares with viewers.
+- Meant for your own network or VPN. Do not expose it directly to the internet; use e.g. a VPN or an SSH tunnel (`ssh -L 7022:localhost:7022 user@computer`, then `share localhost`).
+
+**Settings → "Sharing":** allow sharing, **port** (default 7022), **network address** (empty = all; e.g. only the VPN address), your own name when watching, fingerprint of this computer, known shares of other computers. When sharing for the first time, the firewall (macOS or Windows) may ask whether to allow incoming connections; if the computer cannot be reached, allow port 7022/TCP in the firewall.
 
 ## Copy on select
 
@@ -386,6 +442,7 @@ Sessions are not re-established in the process – SSH, Telnet and serial connec
 - **SSH:** at the password prompt of the target host (`user@host's password:` or `Password:`) MacT-1000 enters the stored password once automatically. If it is rejected, a notice appears and you enter it manually. Prompts of jump hosts and key passphrases are not answered (passphrases on macOS: Keychain option).
 - **Telnet:** user + password are entered at `login:` / `Password:`; the "Auto-login" checkbox is set automatically when you type a password.
 - **Save after manual login:** if you log in manually with a password via SSH or Telnet, MacT-1000 shows at the top of the pane after a successful login: "Save password …?" with *Save* / *Not now* / *Never for this session*. For a Quick Connect connection the session is created with the password. If the password was asked for again directly (wrong), nothing is offered; `sudo` prompts are ignored. Can be turned off in Settings.
+- **Default password per folder (from 1.7.0):** right-click a folder → **"Set default password…"**. It applies to all SSH and Telnet sessions in this folder and all its subfolders that have no password of their own – handy if e.g. all switches of a site share one password. If a subfolder has its own default password, that one applies (the nearest folder wins). A session's own password always takes precedence. Folders with a default password show the marker **PW** in the list; the session dialog shows "empty = default password of folder …" in the empty password field. It is stored encrypted like session passwords (macOS Keychain or Windows DPAPI), moves along when the folder is renamed or moved and is removed when the folder is deleted. The file browser uses it as well. It stays on the respective computer and is not distributed via the network folder; it is included in a configuration export with passwords. To change or remove it: right-click again → "Change default password…".
 - **Keychain access (macOS):** since the app is not signed with an Apple Developer ID, after an update macOS may ask "MacT-1000 wants to access key "MacT-1000 Safe Storage"" – confirm with your Mac password and **Always Allow**. If access is denied, the passwords stay stored encrypted; the session shows "locked" and the password can be entered again.
 
 ## Keyboard shortcuts
@@ -420,7 +477,7 @@ On Windows, Ctrl+letter stays free for the shell (Ctrl+C, Ctrl+D, Ctrl+R …); p
 | Clear terminal | ⌘L | Ctrl+Shift+L |
 | Close pane / tab | ⌘W / ⇧⌘W | Ctrl+Shift+W / Ctrl+Shift+Q |
 | Sidebar on/off | ⌘B | Ctrl+Shift+B |
-| File browser (SCP or SFTP) for the active SSH pane | ⇧⌘F | Ctrl+Shift+D |
+| File browser (SCP) for the active SSH pane | ⇧⌘F | Ctrl+Shift+D |
 | Show servers (TFTP, FTP, HTTP, SFTP/SCP) | ⌥⌘T | Alt+Shift+S |
 | Settings | ⌘, | Ctrl+, |
 | Export entire configuration | ⇧⌘E | – (File menu) |
@@ -438,7 +495,7 @@ Ended sessions can be reconnected with ⌘R or Ctrl+Shift+R (Enter deliberately 
 - **Move:** drag a session onto a folder (the folder is highlighted in blue). Dropping onto a session inside a folder works too. Dropping onto "Sessions (no folder)" or the empty area takes the session out of the folder. Alternatively right-click the session → "Move to folder…".
 - **Subfolders:** right-click a folder → "New subfolder…" (the parent folder can also be chosen freely in the dialog). Can be nested to any depth, e.g. `Data center › Core › Switches`. In the session dialog the folder can also be typed as a path: `Data center/Core/Switches` – missing folders are created automatically. Folder names therefore must not contain "/".
 - **Move folders:** dragging a folder onto another makes it a subfolder (with its content and subfolders); dragging onto "Sessions (no folder)" or right-click → "Move to top level" brings it up. Every folder can be collapsed individually; the number on the folder counts all sessions including subfolders.
-- **Folder right-click:** open all as tiles (including subfolders), new session directly in this folder, new subfolder, rename, delete. Renaming a parent folder updates all subfolders and sessions. When deleting, the contained sessions and subfolders are not deleted but moved one level up.
+- **Folder right-click:** open all as tiles (including subfolders), new session directly in this folder, import sessions from CSV into this folder, new subfolder, rename, set default password, delete. Renaming a parent folder updates all subfolders and sessions. When deleting, the contained sessions and subfolders are not deleted but moved one level up.
 - Dragging sessions from the list onto a pane opens them.
 - Empty folders are saved in the settings and included in the configuration export.
 
@@ -465,7 +522,8 @@ The Windows packages can also be built on macOS or Linux. For your own signature
 src/main.js        Electron main process, menu, IPC, language
 src/sessions.js    Session manager, PTY for local shell / ssh / commands
 src/scp.js         SCP file transfer, directory listing, shared SSH connection (macOS)
-src/sftp.js        SFTP file browser (Windows)
+src/sftp.js        SSH login of the Windows file browser (ssh2) and SFTP fallback option
+src/scp-win.js     File browser on Windows: listing via shell, transfer via SCP protocol
 src/ssh-args.js    Argument helpers
 src/telnet.js      Telnet client (RFC 854, NAWS, TTYPE)
 src/serial.js      Serial console (serialport, /dev/cu.* or COM ports)
@@ -485,10 +543,13 @@ src/updater.js     Automatic update: selects the macOS or Windows variant
 src/updater-mac.js Update on macOS: download, SHA-256 check, unpack, replace after quitting
 src/updater-win.js Update on Windows: download installer, SHA-256 check, silent installation after quitting
 src/launch.js      External calls: evaluate command line and mact1000:// links
+src/share.js       Pane sharing: share service (SSH server, password, blocking, write access) and viewer connection
 src/compat.js      Identifiers of earlier versions (data takeover, former links and formats)
 build/bin/mact1000 Command-line tool (in the Mac app under Contents/Resources/bin)
 build/installer.nsh Additions for the Windows installer (links, replacing WinT-1000)
-beispiele/         Templates: Automator workflow, .command file, AppleScript (macOS), batch and PowerShell (Windows)
+beispiele/         Templates: Automator workflow, .command file, AppleScript (macOS), batch and PowerShell (Windows), CSV template for the session import
+renderer/csv-import.js CSV import of sessions with folders and subfolders
+renderer/share.js  Pane sharing: dialogs, header indicator, viewer management, write requests
 renderer/i18n.js   Language switching English/German; renderer/i18n-en.js contains the English texts
 renderer/          User interface: tabs, split layout, dialogs, file browser, servers tab, macros and loops, external calls (xterm.js)
 test/              Unit, Telnet, SCP, server and end-to-end tests
@@ -510,7 +571,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.6.0`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.0`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|
@@ -523,6 +584,7 @@ For the update check and the automatic update to work, create a release with the
 
 - Testing was done only in a Linux test environment (user interface in macOS and Windows mode, workflows, update logic with a test server). A test on a real Mac and a real Windows PC is still pending – also for the installer, data takeover and automatic update.
 - The firewall (macOS or Windows) may ask on the first start of a server (TFTP/FTP/HTTP/SFTP) whether incoming connections are allowed.
+- Pane sharing: tested only within a test environment (sharing and viewer on the same computer via 127.0.0.1), not between two real computers on a network. The firewall may ask on first sharing as well.
 
 ## License
 
