@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.3 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.4 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.3-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.3-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.4-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.4-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,11 +42,11 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.3-setup.exe` | `MacT-1000-1.8.3-portable.exe` |
+| File | `MacT-1000-1.8.4-setup.exe` | `MacT-1000-1.8.4-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
-| Updates | automatic: downloads the installer, verifies SHA-256, installs silently after confirmation and restarts | notice only; "Download" opens the release page, the EXE does not replace itself |
+| Updates | notice; "Download" downloads the new installer in the browser, then quit MacT-1000 and run the installer | notice; "Download" downloads the new portable EXE in the browser, then replace the old EXE |
 | Uninstall | Settings → Apps → MacT-1000 | delete the EXE |
 
 Neither variant is code-signed. On the first start Windows SmartScreen may show "Windows protected your PC" → "More info" → "Run anyway".
@@ -79,7 +79,7 @@ Features and user interface are the same as on macOS. Differences:
 | File transfer (SCP) | Sidebar tab "Files (SCP)" follows the active SSH pane: browse directories, upload/download files and folders with progress, drag & drop from Finder/Explorer, create folders, rename, delete, "Change to this directory in the terminal (cd)" |
 | Servers (TFTP, FTP, HTTP, SFTP/SCP) | Sidebar tab "Servers": four file servers, each configurable and startable on its own – directory, port, network address, user/password, permissions (read, upload, overwrite, delete). Shared transfer list with progress, e.g. for firmware updates and configuration backups of switches/routers |
 | External calls | Start from Automator, Shortcuts, AppleScript, Terminal, batch files or PowerShell (`mact1000 --local --run "uptime"`) and via `mact1000://` links – local shell, SSH, Telnet, serial, RDP, saved sessions and folders, with commands and macros, output to a file and automatic closing afterwards (`--log`, `--close`, `--quit`) as well as fixed slots in a split tab (`--layout core --slot top`, then `--slot bottom`); commands only after confirmation |
-| Updates | Checks the latest GitHub release at startup and every 6 hours and asks first: install now, remind later or skip this version; then downloads (SHA-256 verified), installs after confirmation and restarts |
+| Updates | Checks the latest GitHub release at startup and every 6 hours and asks first: install now (Windows: download), remind later or skip this version; macOS then downloads (SHA-256 verified), installs after confirmation and restarts; Windows only starts the download in the browser |
 | Telnet | Own implementation with option negotiation (ECHO, SGA, TTYPE, NAWS = window size), auto-login, CR/LF mode, raw TCP for console servers, Break/Interrupt. If a password is stored, auto-login is enabled automatically |
 | Serial | All `/dev/cu.*` ports (Windows: COM ports), baud rate 300–921600, data bits, parity, stop bits, RTS/CTS or XON/XOFF, break signal (e.g. Cisco ROMMON), toggle DTR/RTS, local echo |
 | RDP | macOS: starts "Windows App" (Microsoft, App Store) with a generated .rdp file, or FreeRDP (`brew install freerdp`, password prompt in the pane). Windows: `mstsc.exe`. Resolution, multi-monitor, clipboard, drives, RD Gateway, admin session |
@@ -187,8 +187,13 @@ Notes:
 
 ### Updates on Windows
 
-- **Installed version (setup):** as on macOS – confirmation, then `MacT-1000-<version>-setup.exe` is downloaded from the release, size and SHA-256 are verified, and after "Restart now" it is installed silently; MacT-1000 then restarts. With "Later" it is installed at the next quit. Log: `%APPDATA%\MacT-1000\updates\install.log`.
-- **Portable EXE:** notice only; "Download" opens the release page, replace the `…-portable.exe` manually.
+From 1.8.4 on there is no automatic update on Windows any more, only the notice about a new version with the **Download** button (in the window, in the blue notice and under Help → Check for Updates…). MacT-1000 itself downloads, replaces and installs nothing.
+
+- **Installed version (setup):** **Download** starts the download of `MacT-1000-<version>-setup.exe` from the release in the default browser. Then quit MacT-1000 and run the installer; settings and sessions are kept.
+- **Portable EXE:** **Download** starts the download of `MacT-1000-<version>-portable.exe`. Then quit MacT-1000 and replace the old EXE with the new one.
+- If the file is missing from the release, the release page opens instead.
+- **Remind me later** and **Skip this version** work as on macOS.
+- Leftovers of earlier automatic updates (`%APPDATA%\MacT-1000\updates`) are removed at startup.
 - Installations of the former WinT-1000 (up to 1.5.23) find the update to MacT-1000 through their previous release location, provided it is published there (see "Releases on GitHub").
 
 ## External calls (Automator, Terminal, Windows, links)
@@ -600,7 +605,7 @@ src/version.js     Version comparison for the configuration version
 src/update.js      Query of the latest release on GitHub (update notice)
 src/updater.js     Automatic update: selects the macOS or Windows variant
 src/updater-mac.js Update on macOS: download, SHA-256 check, unpack, replace after quitting
-src/updater-win.js Update on Windows: download installer, SHA-256 check, silent installation after quitting
+src/updater-win.js Update on Windows: notice only, download of installer or portable EXE in the browser
 src/launch.js      External calls: evaluate command line and mact1000:// links
 src/share.js       Pane sharing: share service (SSH server, password, blocking, write access) and viewer connection
 src/compat.js      Identifiers of earlier versions (data takeover, former links and formats)
@@ -630,18 +635,18 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.3`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.4`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|
 | `MacT-1000-<version>-arm64-mac.zip` | Apple Silicon – downloaded by the automatic update |
 | `MacT-1000-<version>-x64-mac.zip` | Intel Macs – downloaded by the automatic update |
-| `MacT-1000-<version>-setup.exe` | Windows installer – downloaded by the installed Windows version and installed silently |
-| `MacT-1000-<version>-portable.exe` | Windows portable (manual) |
+| `MacT-1000-<version>-setup.exe` | Windows installer – downloaded in the browser via "Download" in the installed Windows version |
+| `MacT-1000-<version>-portable.exe` | Windows portable – downloaded in the browser via "Download" in the portable EXE |
 
 ## Notes
 
-- Testing was done only in a Linux test environment (user interface in macOS and Windows mode, workflows, update logic with a test server). A test on a real Mac and a real Windows PC is still pending – also for the installer, data takeover and automatic update.
+- Testing was done only in a Linux test environment (user interface in macOS and Windows mode, workflows, update logic with a test server). A test on a real Mac and a real Windows PC is still pending – also for the installer, data takeover, the automatic update on macOS and the browser download on Windows.
 - The firewall (macOS or Windows) may ask on the first start of a server (TFTP/FTP/HTTP/SFTP) whether incoming connections are allowed.
 - Pane sharing: tested only within a test environment (sharing and viewer on the same computer via 127.0.0.1), not between two real computers on a network. The firewall may ask on first sharing as well.
 
