@@ -2,7 +2,7 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.8.2 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.3 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
 Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.8.2-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.2-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.3-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.3-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.8.2-setup.exe` | `MacT-1000-1.8.2-portable.exe` |
+| Datei | `MacT-1000-1.8.3-setup.exe` | `MacT-1000-1.8.3-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -506,7 +506,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 
 ## Tastenkürzel
 
-Unter Windows bleibt Strg+Buchstabe für die Shell frei (Strg+C, Strg+D, Strg+R …); Programmfunktionen liegen auf Strg+Umschalt bzw. Alt+Umschalt. Strg+C kopiert, wenn Text markiert ist, Strg+V fügt ein. Tooltips und Menüs zeigen jeweils das Kürzel des laufenden Systems.
+Unter Windows bleibt Strg+Buchstabe für die Shell frei (Strg+C, Strg+D, Strg+R …); Programmfunktionen liegen auf Strg+Umschalt bzw. Alt+Umschalt. Strg+C kopiert, wenn Text markiert ist, Strg+V fügt ein. Tooltips, Menüs und Kontextmenüs (Rechtsklick bzw. `⋯` im Pane, Tab, Session-Liste, Makros; ab 1.8.3) zeigen jeweils das Kürzel des laufenden Systems rechts neben dem Eintrag.
 
 | Funktion | Mac | Windows |
 |---|---|---|
@@ -630,7 +630,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.2`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.3`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|

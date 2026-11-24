@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.2 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.3 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.2-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.2-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.3-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.3-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.2-setup.exe` | `MacT-1000-1.8.2-portable.exe` |
+| File | `MacT-1000-1.8.3-setup.exe` | `MacT-1000-1.8.3-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -506,7 +506,7 @@ Sessions are not re-established in the process – SSH, Telnet and serial connec
 
 ## Keyboard shortcuts
 
-On Windows, Ctrl+letter stays free for the shell (Ctrl+C, Ctrl+D, Ctrl+R …); program functions are on Ctrl+Shift or Alt+Shift. Ctrl+C copies when text is selected, Ctrl+V pastes. Tooltips and menus always show the shortcut of the running system.
+On Windows, Ctrl+letter stays free for the shell (Ctrl+C, Ctrl+D, Ctrl+R …); program functions are on Ctrl+Shift or Alt+Shift. Ctrl+C copies when text is selected, Ctrl+V pastes. Tooltips, menus and context menus (right-click or `⋯` in the pane, tab, session list, macros; from 1.8.3) always show the shortcut of the running system to the right of the entry.
 
 | Function | Mac | Windows |
 |---|---|---|
@@ -630,7 +630,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.2`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.3`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|
