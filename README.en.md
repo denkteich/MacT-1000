@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.4 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.5 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.4-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.4-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.5-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.5-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.4-setup.exe` | `MacT-1000-1.8.4-portable.exe` |
+| File | `MacT-1000-1.8.5-setup.exe` | `MacT-1000-1.8.5-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -505,6 +505,7 @@ Sessions are not re-established in the process – SSH, Telnet and serial connec
 - **Store:** the session dialog has a "Password" field for SSH and Telnet. The password is stored encrypted (Electron safeStorage; key in the macOS Keychain or protected by the Windows user account) and never ends up in plain text in the saved window layout.
 - **SSH:** at the password prompt of the target host (`user@host's password:` or `Password:`) MacT-1000 enters the stored password once automatically. If it is rejected, a notice appears and you enter it manually. Prompts of jump hosts and key passphrases are not answered (passphrases on macOS: Keychain option).
 - **Telnet:** user + password are entered at `login:` / `Password:`; the "Auto-login" checkbox is set automatically when you type a password.
+- **Reconnect (from 1.8.5):** When reconnecting (⌘R or Ctrl+Shift+R, context menu, "Reconnect all sessions") and when duplicating, MacT-1000 always uses the currently stored password of the session – even if it was changed since the first connection or saved afterwards. The password prompt is also detected when the terminal sends control characters along with it (e.g. the Windows console); Telnet additionally recognizes `Passwort:`, `Kennwort:` and `Benutzername:`.
 - **Save after manual login:** if you log in manually with a password via SSH or Telnet, MacT-1000 shows at the top of the pane after a successful login: "Save password …?" with *Save* / *Not now* / *Never for this session*. For a Quick Connect connection the session is created with the password. If the password was asked for again directly (wrong), nothing is offered; `sudo` prompts are ignored. Can be turned off in Settings.
 - **Default password per folder (from 1.7.0):** right-click a folder → **"Set default password…"**. It applies to all SSH and Telnet sessions in this folder and all its subfolders that have no password of their own – handy if e.g. all switches of a site share one password. If a subfolder has its own default password, that one applies (the nearest folder wins). A session's own password always takes precedence. Folders with a default password show the marker **PW** in the list; the session dialog shows "empty = default password of folder …" in the empty password field. It is stored encrypted like session passwords (macOS Keychain or Windows DPAPI), moves along when the folder is renamed or moved and is removed when the folder is deleted. The file browser uses it as well. It stays on the respective computer and is not distributed via the network folder; it is included in a configuration export with passwords. To change or remove it: right-click again → "Change default password…".
 - **Keychain access (macOS):** since the app is not signed with an Apple Developer ID, after an update macOS may ask "MacT-1000 wants to access key "MacT-1000 Safe Storage"" – confirm with your Mac password and **Always Allow**. If access is denied, the passwords stay stored encrypted; the session shows "locked" and the password can be entered again.
@@ -635,7 +636,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.4`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.5`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|

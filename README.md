@@ -2,7 +2,7 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.8.4 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.5 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
 Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.8.4-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.4-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.5-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.5-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.8.4-setup.exe` | `MacT-1000-1.8.4-portable.exe` |
+| Datei | `MacT-1000-1.8.5-setup.exe` | `MacT-1000-1.8.5-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -505,6 +505,7 @@ Sessions werden dabei nicht neu aufgebaut – SSH-, Telnet- und serielle Verbind
 - **Hinterlegen:** Im Session-Dialog gibt es für SSH und Telnet ein Feld „Passwort“. Das Passwort wird verschlüsselt gespeichert (Electron safeStorage, Schlüssel im macOS-Schlüsselbund) und landet nicht im Klartext im gespeicherten Fenster-Layout.
 - **SSH:** Beim Passwort-Prompt des Zielhosts (`user@host's password:` bzw. `Password:`) gibt MacT-1000 das gespeicherte Passwort einmal automatisch ein. Wird es abgelehnt, erscheint ein Hinweis und du gibst es von Hand ein. Prompts von Jump-Hosts und Schlüssel-Passphrasen werden nicht beantwortet (Passphrasen: Schlüsselbund-Option).
 - **Telnet:** Benutzer + Passwort werden bei `login:` / `Password:` eingegeben; das Häkchen „Auto-Login“ wird beim Eintippen eines Passworts automatisch gesetzt.
+- **Neu verbinden (ab 1.8.5):** Beim Neu verbinden (⌘R bzw. Strg+Umschalt+R, Kontextmenü, „Alle Sessions neu verbinden“) und beim Duplizieren nimmt MacT-1000 immer das aktuell gespeicherte Passwort der Session – auch wenn es seit dem ersten Verbinden geändert oder erst nachträglich gespeichert wurde. Die Passwort-Abfrage wird auch erkannt, wenn das Terminal Steuerzeichen mitschickt (z. B. die Windows-Konsole); Telnet erkennt zusätzlich `Passwort:`, `Kennwort:` und `Benutzername:`.
 - **Nach manueller Anmeldung speichern:** Meldest du dich per SSH oder Telnet von Hand mit Passwort an, blendet MacT-1000 nach erfolgreichem Login oben im Pane ein: „Passwort … speichern?“ mit *Speichern* / *Nicht jetzt* / *Nie für diese Session*. Bei einer Quick-Connect-Verbindung wird dabei die Session mit Passwort angelegt. Wurde das Passwort direkt erneut abgefragt (falsch), wird nichts angeboten; `sudo`-Abfragen werden ignoriert. Abschaltbar unter Einstellungen.
 - **Standard-Passwort pro Ordner (ab 1.7.0):** Rechtsklick auf einen Ordner → **„Standard-Passwort festlegen…“**. Es gilt für alle SSH- und Telnet-Sessions in diesem Ordner und in allen Unterordnern, die kein eigenes Passwort haben – praktisch, wenn z. B. alle Switche eines Standorts dasselbe Passwort nutzen. Hat ein Unterordner ein eigenes Standard-Passwort, gilt dieses (der nächstgelegene Ordner gewinnt). Ein eigenes Passwort der Session hat immer Vorrang. Ordner mit Standard-Passwort tragen in der Liste die Markierung **PW**; der Session-Dialog zeigt im leeren Passwortfeld „leer = Standard-Passwort des Ordners …“. Es wird wie die Session-Passwörter verschlüsselt gespeichert (macOS-Schlüsselbund bzw. Windows DPAPI), wandert beim Umbenennen und Verschieben des Ordners mit und wird beim Löschen des Ordners entfernt. Der Datei-Browser nutzt es ebenfalls. Es bleibt auf dem jeweiligen Rechner und wird nicht über den Netzordner verteilt; im Konfigurations-Export mit Passwörtern ist es enthalten. Ändern oder entfernen: erneut Rechtsklick → „Standard-Passwort ändern…“.
 - **Schlüsselbund-Zugriff:** Da die App nicht mit einer Apple-Entwickler-ID signiert ist, fragt macOS nach einem Update evtl. „MacT-1000 möchte auf den Schlüssel „MacT-1000 Safe Storage“ zugreifen“ – mit dem Mac-Passwort und **Immer erlauben** bestätigen. Wird der Zugriff verweigert, bleiben die Passwörter verschlüsselt erhalten (früher gingen sie dabei verloren); die Session zeigt dann „gesperrt“ und das Passwort kann neu eingegeben werden.
@@ -635,7 +636,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.4`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.5`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|
