@@ -2,7 +2,7 @@
 
 > The name is a nod to the T-1000 from "Terminator 2" – the liquid-metal Terminator that can split apart and flow back together. Just like the windows of MacT-1000.
 
-Version 1.8.6 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
+Version 1.8.7 · Copyright © 2026 Harald Thomas · MIT License · [Deutsche Version](README.md)
 
 Terminal client for **macOS and Windows** – local shell, SSH (with SCP file transfer), Telnet, serial console and RDP in one window, with freely splittable panes, Multi-Input and Multi-Paste. Plus built-in TFTP, FTP, HTTP and SFTP/SCP servers for firmware updates and configuration backups. User interface in English or German.
 
@@ -23,8 +23,8 @@ The user interface is available in **English** and **German** – menus, dialogs
 ## Installation on macOS
 
 1. Unzip the matching ZIP file:
-   - `MacT-1000-1.8.6-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.6-x64-mac.zip` – Intel Macs
+   - `MacT-1000-1.8.7-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.7-x64-mac.zip` – Intel Macs
 2. Drag `MacT-1000.app` to `/Applications`.
 3. The app is ad-hoc signed but not notarized by Apple. Before the first start, run once in Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64-bit). Two variants:
 
 | | Installable (setup) | Portable |
 |---|---|---|
-| File | `MacT-1000-1.8.6-setup.exe` | `MacT-1000-1.8.6-portable.exe` |
+| File | `MacT-1000-1.8.7-setup.exe` | `MacT-1000-1.8.7-portable.exe` |
 | Installation | Wizard (English/German); default folder `%LOCALAPPDATA%\Programs\MacT-1000`, folder selectable; Start menu and desktop shortcut | none – copy the EXE anywhere (e.g. `C:\Tools`, USB stick) and start it |
 | Administrator rights | not required (installs for the current user only) | not required |
 | `mact1000://` links | registered during installation (former `wint1000://` links as well) | in the "External calls" window → "Set up links for this EXE" |
@@ -108,7 +108,7 @@ If passwords are exported, the default passwords of folders are included as well
 
 ## Importing a session export (from 1.8.6)
 
-Under **Settings → Import session export…**, open the text-based configuration or session export. The preview shows the fixed import folder and the detected SSH, Telnet, RDP and serial sessions. Nested folders are preserved, existing entries are skipped, and no sessions are opened automatically.
+Use **File → Import session export** to open the text-based configuration export. The file picker shows configuration exports first; select the **Session export** filter for `.mxtsessions` and `.ini`. **Settings → Import session export…** remains available. The preview shows the fixed import folder and the detected SSH, Telnet, RDP and serial sessions. Nested folders are preserved, existing entries are skipped, and no sessions are opened automatically.
 
 To import passwords, include saved passwords and credentials when creating the full export. Enter the master password only in the local import dialog and click **Preview import**. Only unambiguously matched credentials are imported, and only if encrypted password storage is available. Without the master password, only sessions are imported. The export format cannot reliably verify the master password; check the login after importing. External RDP clients may still prompt for a password separately.
 
@@ -644,7 +644,7 @@ On the first start MacT-1000 automatically takes over sessions, settings, folder
 
 ## Releases on GitHub
 
-For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.6`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
+For the update check and the automatic update to work, create a release with the tag `v<version>` (e.g. `v1.8.7`) for every version in the repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) and attach these files (file names exactly like this):
 
 | File | Purpose |
 |---|---|

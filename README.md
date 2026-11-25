@@ -2,7 +2,7 @@
 
 > Der Name spielt auf den T-1000 aus „Terminator 2“ an – den Terminator aus Flüssigmetall, der sich teilen und wieder zusammenfließen kann. Genau wie die Fenster von MacT-1000.
 
-Version 1.8.6 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
+Version 1.8.7 · Copyright © 2026 Harald Thomas · MIT-Lizenz · [English version](README.en.md)
 
 Terminal-Client für **macOS und Windows** – lokale Shell, SSH (mit SCP-Dateiübertragung), Telnet, serielle Konsole und RDP in einem Fenster, mit frei teilbaren Panes, Multi-Input und Multi-Paste. Dazu eingebaute TFTP-, FTP-, HTTP- und SFTP/SCP-Server für Firmware-Updates und Konfigurations-Backups. Oberfläche auf Deutsch oder Englisch.
 
@@ -23,8 +23,8 @@ Die Oberfläche gibt es auf **Deutsch** und **Englisch** – Menüs, Dialoge, Hi
 ## Installation unter macOS
 
 1. Passende ZIP-Datei entpacken:
-   - `MacT-1000-1.8.6-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
-   - `MacT-1000-1.8.6-x64-mac.zip` – Intel-Macs
+   - `MacT-1000-1.8.7-arm64-mac.zip` – Apple Silicon (M1/M2/M3/M4)
+   - `MacT-1000-1.8.7-x64-mac.zip` – Intel-Macs
 2. `MacT-1000.app` nach `/Programme` ziehen.
 3. Die App ist ad-hoc signiert, aber nicht von Apple notarisiert. Beim ersten Start daher einmalig im Terminal:
    ```bash
@@ -42,7 +42,7 @@ Windows 10/11 (64 Bit). Zwei Varianten:
 
 | | Installierbar (Setup) | Portable |
 |---|---|---|
-| Datei | `MacT-1000-1.8.6-setup.exe` | `MacT-1000-1.8.6-portable.exe` |
+| Datei | `MacT-1000-1.8.7-setup.exe` | `MacT-1000-1.8.7-portable.exe` |
 | Installation | Assistent (Deutsch/Englisch); Standardordner `%LOCALAPPDATA%\Programs\MacT-1000`, Ordner wählbar; Startmenü- und Desktop-Verknüpfung | keine – EXE an einen beliebigen Ort kopieren (z. B. `C:\Tools`, USB-Stick) und starten |
 | Administratorrechte | nicht nötig (Installation nur für das eigene Benutzerkonto) | nicht nötig |
 | `mact1000://`-Links | werden bei der Installation eingerichtet (frühere `wint1000://`-Links ebenfalls) | im Fenster „Aufruf von außen“ → „Links für diese EXE einrichten“ |
@@ -108,7 +108,7 @@ Werden Passwörter mit exportiert, sind auch die Standard-Passwörter der Ordner
 
 ## Sitzungsexport importieren (ab 1.8.6)
 
-Unter **Einstellungen → Sitzungsexport importieren…** den textbasierten Konfigurations- oder Sitzungsexport öffnen. Die Vorschau zeigt den festen Importordner und die erkannten SSH-, Telnet-, RDP- und seriellen Sitzungen. Unterordner bleiben erhalten. Bereits vorhandene Einträge werden übersprungen. Es werden keine Verbindungen automatisch geöffnet.
+Unter **Ablage** (macOS) bzw. **Datei** (Windows) → **Sitzungsexport importieren** den textbasierten Konfigurationsexport öffnen. Der Dateidialog zeigt zuerst Konfigurationsexporte; für `.mxtsessions` und `.ini` den Filter **Sitzungsexport** wählen. Der Aufruf über **Einstellungen → Sitzungsexport importieren…** bleibt verfügbar. Die Vorschau zeigt den festen Importordner und die erkannten SSH-, Telnet-, RDP- und seriellen Sitzungen. Unterordner bleiben erhalten, vorhandene Einträge werden übersprungen und es werden keine Verbindungen automatisch geöffnet.
 
 Für die Passwortübernahme beim Erstellen des vollständigen Exports die gespeicherten Passwörter und Zugangsdaten einschließen. Das Master-Passwort nur im lokalen Importdialog eingeben und **Importvorschau prüfen** anklicken. Nur eindeutig zugeordnete Zugangsdaten werden übernommen, und nur wenn ein verschlüsselter Passwortspeicher verfügbar ist. Ohne Master-Passwort werden nur Sitzungen importiert. Das Exportformat kann das Master-Passwort nicht zuverlässig verifizieren; nach dem Import die Anmeldung prüfen. Externe RDP-Clients können weiterhin separat nach dem Passwort fragen.
 
@@ -644,7 +644,7 @@ Beim ersten Start übernimmt MacT-1000 automatisch Sessions, Einstellungen, Ordn
 
 ## Releases auf GitHub
 
-Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.6`) anlegen und diese Dateien anhängen (Dateinamen genau so):
+Damit Update-Prüfung und automatisches Update funktionieren, im Repository [denkteich/MacT-1000](https://github.com/denkteich/MacT-1000) je Version ein Release mit dem Tag `v<Version>` (z. B. `v1.8.7`) anlegen und diese Dateien anhängen (Dateinamen genau so):
 
 | Datei | Wofür |
 |---|---|
