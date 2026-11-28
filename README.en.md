@@ -556,6 +556,7 @@ On Windows, Ctrl+letter stays free for the shell (Ctrl+C, Ctrl+D, Ctrl+R …); p
 | Export entire configuration | ⇧⌘E | – (File menu) |
 | Font size larger / smaller / default | ⌘+ / ⌘- / ⌘0 | Ctrl++ / Ctrl+- / Ctrl+0 |
 | Confirm dialog | ⌘↩ | Ctrl+Enter |
+| Create a new session from an active session search | Enter in the search box | Enter in the search box |
 | Word back / forward | ⌥← / ⌥→ | Ctrl+← / Ctrl+→ (depending on the shell) |
 | Start / end of line | fn← / fn→ or Ctrl+A / Ctrl+E | Home / End or Ctrl+A / Ctrl+E |
 | Full screen / developer tools | ⌃⌘F / ⌥⌘I | F11 / F12 |
@@ -564,11 +565,13 @@ Ended sessions can be reconnected with ⌘R or Ctrl+Shift+R (Enter deliberately 
 
 ### Folders in the session list
 
+**Create new session…** is available below the results, even when there are no matches. Click it or press **Enter** in the search box to open the editor. A hostname or IP address is suggested as the host; other search text is suggested as the name. Double-click a result to open an existing session.
+
 - **Create:** right-click in the session list (empty area, a folder or a session) → "New folder…". New folders are empty at first and also remain when empty.
 - **Move:** drag a session onto a folder (the folder is highlighted in blue). Dropping onto a session inside a folder works too. Dropping onto "Sessions (no folder)" or the empty area takes the session out of the folder. Alternatively right-click the session → "Move to folder…".
 - **Subfolders:** right-click a folder → "New subfolder…" (the parent folder can also be chosen freely in the dialog). Can be nested to any depth, e.g. `Data center › Core › Switches`. In the session dialog the folder can also be typed as a path: `Data center/Core/Switches` – missing folders are created automatically. Folder names therefore must not contain "/".
 - **Move folders:** dragging a folder onto another makes it a subfolder (with its content and subfolders); dragging onto "Sessions (no folder)" or right-click → "Move to top level" brings it up. Every folder can be collapsed individually; the number on the folder counts all sessions including subfolders.
-- **Folder right-click:** open all as tiles (including subfolders), new session directly in this folder, import sessions from CSV into this folder, new subfolder, rename, set default password, delete. Renaming a parent folder updates all subfolders and sessions. When deleting, the contained sessions and subfolders are not deleted but moved one level up.
+- **Folder right-click:** open all as tiles (including subfolders), create a session in this folder, import sessions from CSV, create a subfolder, rename, or set a default password. **Delete folder** moves its contents one level up. **Delete folder and contents…** removes the folder, all nested folders, and their saved sessions and credentials from the address book after confirmation. Open connections stay open. If shared network configuration is enabled, the change syncs like other address-book edits; existing backups are unchanged.
 - Dragging sessions from the list onto a pane opens them.
 - Empty folders are saved in the settings and included in the configuration export.
 

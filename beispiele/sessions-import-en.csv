@@ -1,0 +1,8 @@
+﻿Folder;Name;Type;Host;Port;User;Password;Key file;Baud;Default password
+Datacenter;;Folder;;;;;;;SecretDC-Password
+Datacenter/Core/Switches;core-sw01;SSH;10.0.0.1;22;admin;;;;
+Datacenter/Core/Switches;core-sw02;SSH;10.0.0.2;;admin;;;;
+Datacenter/Core/Routers;edge-rt01;Telnet;10.0.1.1;23;admin;OwnPassword;;;
+Datacenter/Servers;jump01;SSH;jump01.example.local;2222;ops;;~/.ssh/id_ed25519;;
+Office;Terminal server;RDP;ts01.example.local;3389;administrator;;;;
+Lab/Consoles;Console COM3;Serial;COM3;;;;;9600;

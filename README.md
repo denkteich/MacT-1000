@@ -556,6 +556,7 @@ Unter Windows bleibt Strg+Buchstabe für die Shell frei (Strg+C, Strg+D, Strg+R 
 | Gesamte Konfiguration exportieren | ⇧⌘E | – (Menü Datei) |
 | Schriftgröße größer / kleiner / Standard | ⌘+ / ⌘- / ⌘0 | Strg++ / Strg+- / Strg+0 |
 | Dialog bestätigen | ⌘↩ | Strg+Enter |
+| Neue Session aus einer laufenden Session-Suche erstellen | Enter im Suchfeld | Enter im Suchfeld |
 | Wort zurück / vor | ⌥← / ⌥→ | Strg+← / Strg+→ (je nach Shell) |
 | Zeilenanfang / -ende | fn← / fn→ oder Ctrl+A / Ctrl+E | Pos1 / Ende oder Strg+A / Strg+E |
 | Vollbild / Entwicklerwerkzeuge | ⌃⌘F / ⌥⌘I | F11 / F12 |
@@ -564,11 +565,13 @@ Beendete Sessions lassen sich mit ⌘R bzw. Strg+Umschalt+R neu verbinden (Enter
 
 ### Ordner in der Session-Liste
 
+Unter den Suchergebnissen steht **Neue Session erstellen…**, auch wenn nichts gefunden wurde. Ein Klick oder **Enter** im Suchfeld öffnet den Dialog. Ein Hostname oder eine IP-Adresse wird als Host vorgeschlagen, anderer Suchtext als Name. Vorhandene Sessions lassen sich weiterhin per Doppelklick öffnen.
+
 - **Anlegen:** Rechtsklick in die Session-Liste (freie Fläche, auf einen Ordner oder eine Session) → „Neuer Ordner…“. Neue Ordner sind zunächst leer und bleiben auch leer bestehen.
 - **Verschieben:** Session mit der Maus auf einen Ordner ziehen (der Ordner wird blau markiert). Auf eine Session in einem Ordner ziehen geht auch. Auf „Sessions (ohne Ordner)“ oder auf die freie Fläche ziehen nimmt die Session aus dem Ordner. Alternativ Rechtsklick auf die Session → „In Ordner verschieben…“.
 - **Unterordner:** Rechtsklick auf einen Ordner → „Neuer Unterordner…“ (im Dialog lässt sich der Oberordner auch frei wählen). Beliebig tief verschachtelbar, z. B. `Rechenzentrum › Core › Switche`. Im Session-Dialog kann der Ordner auch als Pfad eingetippt werden: `Rechenzentrum/Core/Switche` – fehlende Ordner werden automatisch angelegt. Ordnernamen dürfen deshalb kein „/“ enthalten.
 - **Ordner verschieben:** einen Ordner auf einen anderen ziehen macht ihn (samt Inhalt und Unterordnern) zum Unterordner; auf „Sessions (ohne Ordner)“ ziehen oder Rechtsklick → „Auf oberste Ebene verschieben“ holt ihn nach oben. Jeder Ordner lässt sich einzeln einklappen; die Zahl am Ordner zählt alle Sessions inklusive Unterordnern.
-- **Ordner-Rechtsklick:** Alle als Kacheln öffnen (inklusive Unterordner), neue Session direkt in diesem Ordner, Sessions aus CSV hierher importieren, neuer Unterordner, umbenennen, Standard-Passwort festlegen, löschen. Umbenennen eines Oberordners passt alle Unterordner und Sessions mit an. Beim Löschen werden die enthaltenen Sessions und Unterordner nicht gelöscht, sondern eine Ebene nach oben verschoben (bei einem Ordner der obersten Ebene nach „Sessions“).
+- **Ordner-Rechtsklick:** Alle als Kacheln öffnen (inklusive Unterordner), neue Session direkt in diesem Ordner, Sessions aus CSV hierher importieren, neuer Unterordner, umbenennen, Standard-Passwort festlegen. **Ordner löschen** verschiebt den Inhalt eine Ebene nach oben. **Ordner samt Inhalt löschen…** entfernt nach Bestätigung den Ordner, alle Unterordner und alle darin gespeicherten Sessions samt Zugangsdaten aus dem Adressbuch. Offene Verbindungen bleiben geöffnet. Bei aktivierter Netzwerk-Konfiguration wird die Änderung wie andere Änderungen am Adressbuch synchronisiert; vorhandene Backups bleiben unverändert.
 - Sessions aus der Liste auf ein Pane zu ziehen öffnet sie wie bisher.
 - Leere Ordner werden in den Einstellungen gespeichert und beim Konfigurations-Export mitgenommen.
 

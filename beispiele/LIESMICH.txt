@@ -1,0 +1,38 @@
+Beispiele für Aufrufe von außen (MacT-1000 ab 1.6.0, macOS und Windows)
+English: see README.txt
+
+macOS
+-----
+MacT-1000 Befehle ausführen.workflow   Automator-Arbeitsablauf mit der Aktion „Shell-Skript ausführen“.
+                                       Doppelklick öffnet ihn in Automator; Befehle anpassen, Ausführen.
+MacT-1000 Befehle ausführen.command    Dasselbe als Skript für den Finder (Doppelklick).
+MacT-1000 aufrufen.applescript         Für den Skripteditor bzw. Kurzbefehle („AppleScript ausführen“).
+
+Windows
+-------
+MacT-1000-Beispiel.cmd                 Batch-Datei (Doppelklick); Pfad zur EXE ggf. anpassen.
+MacT-1000-Beispiel.ps1                 PowerShell-Skript; Pfad zur EXE ggf. anpassen.
+                                       Für Verknüpfungen: Desktop → Neu → Verknüpfung, Befehl als Ziel.
+                                       Für zeitgesteuerte Abläufe: Aufgabenplanung mit demselben Befehl.
+
+Beim ersten Ausführen fragt MacT-1000 nach, bevor Befehle laufen. Mit „Genau diesen Aufruf künftig
+ohne Rückfrage ausführen“ läuft derselbe Aufruf danach direkt. Alle Optionen: Fenster „Aufruf von außen“
+(macOS: Menü MacT-1000, Windows: Menü Hilfe) oder README, Abschnitt „Aufruf von außen“.
+
+Fenster danach schließen: --close [SEK] schließt das Pane, sobald nach dem letzten Befehl SEK Sekunden
+keine Ausgabe mehr kam; --quit beendet MacT-1000 danach ganz (wenn sonst nichts läuft);
+--log DATEI hängt die Ausgabe an eine Datei an.
+
+Feste Plätze im geteilten Fenster: --layout NAME --slot oben|unten|links|rechts|next öffnet ein Ziel in
+einem festen Platz eines geteilten Tabs, z. B. erster Aufruf --slot oben, nächster --slot unten.
+--grid 2h|2v|4 wählt das Raster, --busy fragen|ersetzen|neu|abbrechen das Verhalten, wenn der Platz
+schon belegt ist. Englische Werte (top, bottom, left, right, ask, replace, new, cancel) gehen auch.
+
+Frühere wint1000://-Links der Windows-Ausgabe (bis 1.5.23 WinT-1000) funktionieren weiter.
+
+CSV-Vorlage für den Session-Import (ab 1.7.0)
+sessions-import.csv (englisch: sessions-import-en.csv) zeigt den Aufbau für
+Datei → Sessions aus CSV importieren…: Spalten Ordner;Name;Typ;Host;Port;Benutzer;Passwort;…
+Unterordner werden im Feld Ordner mit / getrennt (z. B. Rechenzentrum/Core/Switche).
+Eine Zeile mit Typ "Ordner" und einem Standardpasswort legt das Standard-Passwort des Ordners fest.
+Die Datei lässt sich direkt in Excel öffnen und bearbeiten.

@@ -1,0 +1,8 @@
+﻿Ordner;Name;Typ;Host;Port;Benutzer;Passwort;Schlüsseldatei;Baudrate;Standardpasswort
+Rechenzentrum;;Ordner;;;;;;;GeheimesRZ-Passwort
+Rechenzentrum/Core/Switche;core-sw01;SSH;10.0.0.1;22;admin;;;;
+Rechenzentrum/Core/Switche;core-sw02;SSH;10.0.0.2;;admin;;;;
+Rechenzentrum/Core/Router;edge-rt01;Telnet;10.0.1.1;23;admin;EigenesPasswort;;;
+Rechenzentrum/Server;jump01;SSH;jump01.example.local;2222;ops;;~/.ssh/id_ed25519;;
+Büro;Terminalserver;RDP;ts01.example.local;3389;administrator;;;;
+Labor/Konsolen;Konsole COM3;Seriell;COM3;;;;;9600;

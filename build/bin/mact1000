@@ -1,0 +1,36 @@
+#!/bin/bash
+# MacT-1000 aus Terminal, Automator oder Kurzbefehlen aufrufen.
+#   mact1000 --local --run "uptime"
+#   mact1000 --ssh admin@10.0.0.1 --run "show version"
+#   mact1000 --session "Rechenzentrum/core-sw01" --macro "Backup"
+#   mact1000 --ssh admin@10.0.0.1 --run "show version" --log ~/Logs/sw.log --close 3
+#   mact1000 --help
+# Läuft MacT-1000 bereits, öffnet sich ein neuer Tab im vorhandenen Fenster.
+SELF="$0"
+while [ -L "$SELF" ]; do
+  L="$(readlink "$SELF")"
+  case "$L" in /*) SELF="$L" ;; *) SELF="$(dirname "$SELF")/$L" ;; esac
+done
+APP="$(cd "$(dirname "$SELF")/../../.." 2>/dev/null && pwd)"
+case "$APP" in
+  *.app) ;;
+  *) APP="$(/usr/bin/mdfind 'kMDItemCFBundleIdentifier == "de.mact1000.app"' 2>/dev/null | head -1)" ;;
+esac
+[ -n "$APP" ] || APP="MacT-1000"
+if [ $# -eq 0 ]; then exec /usr/bin/open -a "$APP"; fi
+# relative Pfade bei --log auf das aktuelle Verzeichnis beziehen (die App startet mit einem anderen Arbeitsverzeichnis)
+ARGS=(); NEXT_LOG=0
+for A in "$@"; do
+  if [ $NEXT_LOG -eq 1 ]; then
+    case "$A" in /*|'~'*|--*) ;; *) A="$PWD/$A" ;; esac
+    NEXT_LOG=0
+  else
+    case "$A" in
+      --log) NEXT_LOG=1 ;;
+      --log=/*|--log='~'*) ;;
+      --log=*) A="--log=$PWD/${A#--log=}" ;;
+    esac
+  fi
+  ARGS+=("$A")
+done
+exec /usr/bin/open -n -a "$APP" --args "${ARGS[@]}"
